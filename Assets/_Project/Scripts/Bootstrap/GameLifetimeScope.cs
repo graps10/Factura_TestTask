@@ -1,4 +1,6 @@
+using TurretRush.Combat;
 using TurretRush.Config;
+using TurretRush.Input;
 using TurretRush.Player;
 using TurretRush.World;
 using UnityEngine;
@@ -18,6 +20,8 @@ namespace TurretRush.Bootstrap
         [SerializeField] private LevelConfig levelConfig;
         [SerializeField] private CarConfig carConfig;
         [SerializeField] private CameraConfig cameraConfig;
+        [SerializeField] private TurretConfig turretConfig;
+        [SerializeField] private WeaponConfig weaponConfig;
 
         [Header("Scene")]
         [SerializeField] private Camera cam;
@@ -27,14 +31,25 @@ namespace TurretRush.Bootstrap
             builder.RegisterInstance(levelConfig);
             builder.RegisterInstance(carConfig);
             builder.RegisterInstance(cameraConfig);
+            builder.RegisterInstance(turretConfig);
+            builder.RegisterInstance(weaponConfig);
 
             builder.RegisterComponent(cam);
             builder.RegisterComponentInHierarchy<CarView>();
+            builder.RegisterComponentInHierarchy<TurretView>();
+
+            builder.Register<IInputService, PointerInputService>(Lifetime.Singleton);
 
             // Entry points run in registration order, and that order is the frame's
-            // execution order. The car moves first; everything that reads its position
-            // in the same frame comes after it, so nothing lags a frame behind.
+            // execution order. Read top to bottom it is the shape of one frame: the
+            // car moves, the barrel is pointed, the gun fires down that barrel, the
+            // bullets already in the air advance, the road catches up, the camera
+            // looks at the result. Nothing here reads a value another system has yet
+            // to write this frame.
             builder.RegisterEntryPoint<CarMovement>().AsSelf();
+            builder.RegisterEntryPoint<TurretAim>().AsSelf();
+            builder.RegisterEntryPoint<Weapon>().AsSelf();
+            builder.RegisterEntryPoint<ProjectileSystem>().AsSelf();
             builder.RegisterEntryPoint<GroundStreamer>().AsSelf();
             builder.RegisterEntryPoint<CameraRig>().AsSelf();
 
