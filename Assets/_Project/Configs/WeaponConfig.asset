@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad47636a29924944ae3bacc1628166d, type: 3}
+  m_Name: WeaponConfig
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.WeaponConfig
+  fireInterval: 0.35
+  initialDelay: 0.6
+  projectilePrefab: {fileID: 8396751289508902141, guid: fd552fcee89bbc64ea0c33264e6d5f7b, type: 3}
+  damage: 10
+  speed: 90
+  radius: 0.2
+  maxRange: 200
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 128
+  poolCapacity: 32
+  poolMaxSize: 128

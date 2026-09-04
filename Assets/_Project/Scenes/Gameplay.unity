@@ -671,6 +671,8 @@ MonoBehaviour:
   levelConfig: {fileID: 11400000, guid: 1e91b900542ed9c488379265c742bd67, type: 2}
   carConfig: {fileID: 11400000, guid: c190e7aafdefcd54d9c8083a556c9581, type: 2}
   cameraConfig: {fileID: 11400000, guid: c8eb83e64ae53af4182fb00813cbc16f, type: 2}
+  turretConfig: {fileID: 11400000, guid: bec957df30c5cea4793cf0d222c44b10, type: 2}
+  weaponConfig: {fileID: 11400000, guid: 9ff29dc853925e04482e4e485ee25842, type: 2}
   cam: {fileID: 330585545}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
