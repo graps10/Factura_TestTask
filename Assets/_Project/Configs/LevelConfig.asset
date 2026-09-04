@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1db76c9a92794d5409fce82aba325585, type: 3}
+  m_Name: LevelConfig
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.LevelConfig
+  length: 450
+  groundTilePrefab: {fileID: 1273227476947232817, guid: f35274e9c6ed3c546925b9891329cbb6, type: 3}
+  tileLength: 75
+  tileCount: 4
+  roadHalfWidth: 10.7
+  roadEdgeMargin: 2
