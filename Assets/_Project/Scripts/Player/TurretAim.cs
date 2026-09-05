@@ -61,10 +61,17 @@ namespace TurretRush.Player
             if (!IsEnabled)
                 return;
 
+            // No time passed means the game is paused. Input is still arriving - the
+            // input system does not care about the time scale - so without this the
+            // player could keep swinging the barrel behind the pause menu.
+            var deltaTime = Time.deltaTime;
+            if (deltaTime <= 0f)
+                return;
+
             if (_input.IsPressed)
                 _state.AddInput(_input.DragDelta.x / Mathf.Max(1, Screen.width));
 
-            _state.Step(Time.deltaTime);
+            _state.Step(deltaTime);
             _view.SetYaw(_state.CurrentYaw);
 
             UpdateBeam();

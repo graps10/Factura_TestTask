@@ -17,6 +17,7 @@ namespace TurretRush.Bootstrap
         private readonly LevelSession _session;
         private readonly GameScreensView _screens;
         private readonly CameraRig _camera;
+        private readonly HudView _hud;
         private readonly IInputService _input;
 
         private readonly CancellationTokenSource _lifetime = new();
@@ -25,11 +26,13 @@ namespace TurretRush.Bootstrap
             LevelSession session,
             GameScreensView screens,
             CameraRig camera,
+            HudView hud,
             IInputService input)
         {
             _session = session;
             _screens = screens;
             _camera = camera;
+            _hud = hud;
             _input = input;
         }
 
@@ -50,6 +53,7 @@ namespace TurretRush.Bootstrap
                     _session.ResetToStart();
                     _camera.SnapToIntro();
                     _screens.HideAllImmediate();
+                    _hud.SetVisible(false);
 
                     await _screens.WaitForStartAsync(cancellationToken);
                     await _camera.PlayIntroAsync(cancellationToken);
@@ -59,8 +63,14 @@ namespace TurretRush.Bootstrap
                     await WaitForTapAsync(cancellationToken);
                     await _screens.HideHintAsync(cancellationToken);
 
+                    // The HUD belongs to the level, not to the menus around it - and
+                    // hiding it also takes the pause button away everywhere pausing
+                    // would make no sense.
+                    _hud.SetVisible(true);
                     var result = await PlayLevelAsync(cancellationToken);
+
                     _session.Halt();
+                    _hud.SetVisible(false);
 
                     await _screens.ShowResultAsync(result, cancellationToken);
                     await WaitForTapAsync(cancellationToken);

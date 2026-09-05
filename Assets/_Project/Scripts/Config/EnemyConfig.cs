@@ -15,6 +15,9 @@ namespace TurretRush.Config
         [SerializeField, Min(1)] private int maxHealth = 30;
         [SerializeField, Min(1)] private int damageToCar = 12;
 
+        [Tooltip("Coins paid for putting one down.")]
+        [SerializeField, Min(0)] private int coinsPerKill = 10;
+
         [Header("Movement")]
         [Tooltip("Metres per second while charging the car. Must stay under the car's " +
                  "speed, or an enemy noticed late could never be outrun.")]
@@ -68,6 +71,8 @@ namespace TurretRush.Config
         public int MaxHealth => maxHealth;
 
         public int DamageToCar => damageToCar;
+
+        public int CoinsPerKill => coinsPerKill;
 
         public float RunSpeed => runSpeed;
 

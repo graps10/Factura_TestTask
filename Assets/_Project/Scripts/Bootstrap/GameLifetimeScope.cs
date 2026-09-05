@@ -46,6 +46,9 @@ namespace TurretRush.Bootstrap
             builder.RegisterComponentInHierarchy<CarView>();
             builder.RegisterComponentInHierarchy<TurretView>();
             builder.RegisterComponentInHierarchy<GameScreensView>();
+            builder.RegisterComponentInHierarchy<HudView>();
+            builder.RegisterComponentInHierarchy<PauseView>();
+            builder.RegisterComponentInHierarchy<FloatingTextPool>();
 
             builder.Register<IInputService, PointerInputService>(Lifetime.Singleton);
 
@@ -53,6 +56,7 @@ namespace TurretRush.Bootstrap
             // enemies build their own, one per body, as they come out of the pool.
             builder.Register(_ => new Health(carConfig.MaxHealth), Lifetime.Singleton);
             builder.Register(_ => new LevelProgress(levelConfig.Length), Lifetime.Singleton);
+            builder.Register<CoinWallet>(Lifetime.Singleton);
             builder.Register<LevelSession>(Lifetime.Singleton);
 
             // Entry points run in registration order, and that order is the frame's
@@ -77,6 +81,9 @@ namespace TurretRush.Bootstrap
             // and either could be removed without touching a rule.
             builder.RegisterEntryPoint<VfxSystem>().AsSelf();
             builder.RegisterEntryPoint<CarFeedback>();
+            builder.RegisterEntryPoint<CoinReward>().AsSelf();
+            builder.RegisterEntryPoint<HudPresenter>();
+            builder.RegisterEntryPoint<PauseController>();
 
             // Registered last so its Start runs after every system has placed itself,
             // and the first thing the player sees is a settled scene.
