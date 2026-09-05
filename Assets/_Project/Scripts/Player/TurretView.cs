@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace TurretRush.Player
@@ -17,6 +18,18 @@ namespace TurretRush.Player
         [SerializeField] private Transform muzzle;
 
         [SerializeField] private LineRenderer laser;
+
+        [Header("Firing")]
+        [SerializeField] private ParticleSystem muzzleFlash;
+
+        [Tooltip("The turret mesh. Kicked back on each shot.")]
+        [SerializeField] private Transform recoilRoot;
+
+        [SerializeField, Min(0f)] private float recoilDistance = 0.18f;
+
+        [SerializeField, Min(0.02f)] private float recoilDuration = 0.12f;
+
+        private Tween _recoil;
 
         public Vector3 MuzzlePosition => muzzle.position;
 
@@ -39,6 +52,45 @@ namespace TurretRush.Player
         {
             if (laser != null)
                 laser.enabled = false;
+        }
+
+        /// <summary>
+        /// Recoil is a position punch, not a rotation one, and that is the whole
+        /// reason it is safe: DOPunchPosition moves localPosition, so the muzzle -
+        /// a child of the mesh - slides back a few centimetres while its forward axis
+        /// is untouched. A rotation punch would tilt the bore, and the barrel already
+        /// sits close enough to the top of an enemy that a couple of degrees would
+        /// start throwing shots over their heads.
+        /// </summary>
+        public void PlayShot()
+        {
+            if (muzzleFlash != null)
+            {
+                muzzleFlash.Clear(true);
+                muzzleFlash.Play(true);
+            }
+
+            if (recoilRoot == null)
+                return;
+
+            KillRecoil();
+            _recoil = recoilRoot.DOPunchPosition(Vector3.back * recoilDistance, recoilDuration, 1, 0.6f);
+        }
+
+        public void ResetShot()
+        {
+            KillRecoil();
+
+            if (muzzleFlash != null)
+                muzzleFlash.Clear(true);
+        }
+
+        private void KillRecoil()
+        {
+            if (_recoil.IsActive())
+                _recoil.Kill();
+
+            _recoil = null;
         }
 
         private void Awake()

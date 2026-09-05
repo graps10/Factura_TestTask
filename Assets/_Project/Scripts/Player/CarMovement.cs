@@ -17,6 +17,9 @@ namespace TurretRush.Player
         private readonly CarConfig _config;
         private readonly LateralDrift _drift;
 
+        private float _bank;
+        private float _bankVelocity;
+
         public CarMovement(CarView view, CarConfig config, LevelConfig level)
         {
             _view = view;
@@ -44,7 +47,12 @@ namespace TurretRush.Player
             IsRunning = false;
             Speed = 0f;
             DistanceTravelled = 0f;
+            _bank = 0f;
+            _bankVelocity = 0f;
+
             ApplyTransform();
+            _view.SetBank(0f);
+            _view.SetExhaust(0f);
         }
 
         // Placing the car is a scene side effect, so it happens here and not in the
@@ -60,14 +68,42 @@ namespace TurretRush.Player
             var rate = targetSpeed > Speed ? _config.Acceleration : _config.Braking;
             Speed = Mathf.MoveTowards(Speed, targetSpeed, rate * deltaTime);
 
-            if (Speed <= Mathf.Epsilon)
-                return;
+            if (Speed > Mathf.Epsilon)
+            {
+                var delta = Speed * deltaTime;
+                DistanceTravelled += delta;
 
-            var delta = Speed * deltaTime;
-            DistanceTravelled += delta;
+                ApplyTransform();
+                _view.SpinWheels(delta);
+            }
 
-            ApplyTransform();
-            _view.SpinWheels(delta);
+            // Outside the speed check on purpose: the body has to settle back level
+            // and the exhaust has to die down while the car is braking to a stop.
+            UpdateBodywork(deltaTime);
+        }
+
+        private void UpdateBodywork(float deltaTime)
+        {
+            var speedFactor = _config.Speed <= 0f ? 0f : Speed / _config.Speed;
+            var heading = _drift.HeadingDegrees(DistanceTravelled, _config.HeadingLookAhead);
+
+            // Scaled by speed, because roll comes from cornering and a parked car does
+            // not corner. Without it the start line is already six degrees into the
+            // first bend, and the car sits leaning while it waits for the player.
+            //
+            // Damped rather than driven straight from the heading, so the body lags the
+            // steering slightly - weight taking a moment to transfer, rather than the
+            // whole car snapping to a new angle.
+            _bank = Mathf.SmoothDamp(
+                _bank,
+                heading * _config.BankPerHeadingDegree * speedFactor,
+                ref _bankVelocity,
+                _config.BankSmoothTime,
+                Mathf.Infinity,
+                deltaTime);
+
+            _view.SetBank(_bank);
+            _view.SetExhaust(speedFactor);
         }
 
         private void ApplyTransform()

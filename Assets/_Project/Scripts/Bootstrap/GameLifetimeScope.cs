@@ -49,6 +49,7 @@ namespace TurretRush.Bootstrap
             builder.RegisterComponentInHierarchy<HudView>();
             builder.RegisterComponentInHierarchy<PauseView>();
             builder.RegisterComponentInHierarchy<FloatingTextPool>();
+            builder.RegisterComponentInHierarchy<EnemyHealthBarLayer>();
 
             builder.Register<IInputService, PointerInputService>(Lifetime.Singleton);
 
@@ -58,6 +59,8 @@ namespace TurretRush.Bootstrap
             builder.Register(_ => new LevelProgress(levelConfig.Length), Lifetime.Singleton);
             builder.Register<CoinWallet>(Lifetime.Singleton);
             builder.Register<LevelSession>(Lifetime.Singleton);
+
+            builder.RegisterEntryPoint<DisplaySettings>();
 
             // Entry points run in registration order, and that order is the frame's
             // execution order. Read top to bottom it is the shape of one frame: the
@@ -83,6 +86,8 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<CarFeedback>();
             builder.RegisterEntryPoint<CoinReward>().AsSelf();
             builder.RegisterEntryPoint<HudPresenter>();
+            builder.RegisterEntryPoint<PopupPresenter>();
+            builder.RegisterEntryPoint<EnemyHealthBarPresenter>();
             builder.RegisterEntryPoint<PauseController>();
 
             // Registered last so its Start runs after every system has placed itself,

@@ -31,6 +31,14 @@ namespace TurretRush.Config
         [Tooltip("Distance ahead sampled to work out which way the car is pointing.")]
         [SerializeField, Min(0.1f)] private float headingLookAhead = 2f;
 
+        [Header("Body")]
+        [Tooltip("Degrees of roll per degree of heading. Positive leans the body away " +
+                 "from the turn, the way a real car's suspension loads up; a negative " +
+                 "value leans into it instead.")]
+        [SerializeField] private float bankPerHeadingDegree = 1.5f;
+
+        [SerializeField, Min(0.01f)] private float bankSmoothTime = 0.18f;
+
         public int MaxHealth => maxHealth;
 
         public float Speed => speed;
@@ -46,5 +54,9 @@ namespace TurretRush.Config
         public float DriftPhase => driftPhase;
 
         public float HeadingLookAhead => headingLookAhead;
+
+        public float BankPerHeadingDegree => bankPerHeadingDegree;
+
+        public float BankSmoothTime => bankSmoothTime;
     }
 }

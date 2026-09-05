@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using TurretRush.Input;
 using TurretRush.Level;
+using TurretRush.Player;
 using TurretRush.UI;
 using TurretRush.World;
 using VContainer.Unity;
@@ -18,6 +19,7 @@ namespace TurretRush.Bootstrap
         private readonly GameScreensView _screens;
         private readonly CameraRig _camera;
         private readonly HudView _hud;
+        private readonly CarView _car;
         private readonly IInputService _input;
 
         private readonly CancellationTokenSource _lifetime = new();
@@ -27,12 +29,14 @@ namespace TurretRush.Bootstrap
             GameScreensView screens,
             CameraRig camera,
             HudView hud,
+            CarView car,
             IInputService input)
         {
             _session = session;
             _screens = screens;
             _camera = camera;
             _hud = hud;
+            _car = car;
             _input = input;
         }
 
@@ -53,7 +57,7 @@ namespace TurretRush.Bootstrap
                     _session.ResetToStart();
                     _camera.SnapToIntro();
                     _screens.HideAllImmediate();
-                    _hud.SetVisible(false);
+                    ShowLevelReadouts(false);
 
                     await _screens.WaitForStartAsync(cancellationToken);
                     await _camera.PlayIntroAsync(cancellationToken);
@@ -63,14 +67,11 @@ namespace TurretRush.Bootstrap
                     await WaitForTapAsync(cancellationToken);
                     await _screens.HideHintAsync(cancellationToken);
 
-                    // The HUD belongs to the level, not to the menus around it - and
-                    // hiding it also takes the pause button away everywhere pausing
-                    // would make no sense.
-                    _hud.SetVisible(true);
+                    ShowLevelReadouts(true);
                     var result = await PlayLevelAsync(cancellationToken);
 
                     _session.Halt();
-                    _hud.SetVisible(false);
+                    ShowLevelReadouts(false);
 
                     await _screens.ShowResultAsync(result, cancellationToken);
                     await WaitForTapAsync(cancellationToken);
@@ -93,6 +94,17 @@ namespace TurretRush.Bootstrap
                 cancellationToken: cancellationToken);
 
             return _session.Outcome.Value;
+        }
+
+        /// <summary>
+        /// The HUD and the bar over the car go together: both belong to the level
+        /// being played, and hiding the HUD also takes the pause button away
+        /// everywhere pausing would make no sense.
+        /// </summary>
+        private void ShowLevelReadouts(bool visible)
+        {
+            _hud.SetVisible(visible);
+            _car.SetHealthBarVisible(visible);
         }
 
         private UniTask WaitForTapAsync(CancellationToken cancellationToken)

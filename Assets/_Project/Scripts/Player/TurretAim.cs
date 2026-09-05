@@ -52,15 +52,13 @@ namespace TurretRush.Player
             Disable();
             _state.Reset();
             _view.SetYaw(0f);
+            _view.ResetShot();
         }
 
         public void Start() => ResetToStart();
 
         public void Tick()
         {
-            if (!IsEnabled)
-                return;
-
             // No time passed means the game is paused. Input is still arriving - the
             // input system does not care about the time scale - so without this the
             // player could keep swinging the barrel behind the pause menu.
@@ -68,13 +66,19 @@ namespace TurretRush.Player
             if (deltaTime <= 0f)
                 return;
 
-            if (_input.IsPressed)
+            if (IsEnabled && _input.IsPressed)
                 _state.AddInput(_input.DragDelta.x / Mathf.Max(1, Screen.width));
 
             _state.Step(deltaTime);
+
+            // Written every frame, not only while aiming is live. The pivot hangs off
+            // the bodywork, which rolls in corners, so a frame that skips this leaves
+            // the barrel drifting with the body - and the next frame that does write
+            // it snaps the turret level in one jump.
             _view.SetYaw(_state.CurrentYaw);
 
-            UpdateBeam();
+            if (IsEnabled)
+                UpdateBeam();
         }
 
         private void UpdateBeam()

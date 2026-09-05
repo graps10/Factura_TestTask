@@ -49,7 +49,12 @@ namespace TurretRush.Combat
 
             var shots = _timer.Step(Time.deltaTime);
             for (var i = 0; i < shots; i++)
+            {
+                // Spawned before the kick, so the bullet leaves the barrel where the
+                // player was aiming rather than where the recoil has just put it.
                 _projectiles.Spawn(_view.MuzzlePosition, _view.AimDirection);
+                _view.PlayShot();
+            }
         }
     }
 }

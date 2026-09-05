@@ -30,7 +30,44 @@ namespace TurretRush.Player
                  "same car comes back for the next attempt.")]
         [SerializeField] private GameObject[] visuals;
 
+        [Header("Body")]
+        [Tooltip("The transform the bodywork hangs off. Rolled in corners - the root " +
+                 "is left alone, because the collider on it defines the footprint the " +
+                 "melee check reads.")]
+        [SerializeField] private Transform bodyRoot;
+
+        [SerializeField] private ParticleSystem exhaust;
+
+        [Tooltip("Emission at full speed. Scaled down as the car slows, so the smoke " +
+                 "stops on its own when the level ends.")]
+        [SerializeField, Min(0f)] private float exhaustRate = 35f;
+
+        [Tooltip("The bar over the car. Hidden outside the level, so the showcase " +
+                 "shot behind a parked car has nothing hanging off it.")]
+        [SerializeField] private GameObject healthBar;
+
         public Transform Root => transform;
+
+        public void SetHealthBarVisible(bool visible)
+        {
+            if (healthBar != null)
+                healthBar.SetActive(visible);
+        }
+
+        public void SetBank(float degrees)
+        {
+            if (bodyRoot != null)
+                bodyRoot.localRotation = Quaternion.Euler(0f, 0f, degrees);
+        }
+
+        public void SetExhaust(float normalizedSpeed)
+        {
+            if (exhaust == null)
+                return;
+
+            var emission = exhaust.emission;
+            emission.rateOverTimeMultiplier = exhaustRate * Mathf.Clamp01(normalizedSpeed);
+        }
 
         public void Flash()
         {
