@@ -117,7 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TurretRush.Game::TurretRush.Combat.HitFlash
   renderers:
   - {fileID: 2631251165229980248}
-  duration: 0.14
+  duration: 0.3
 --- !u!1 &184302730269118795
 GameObject:
   m_ObjectHideFlags: 0
