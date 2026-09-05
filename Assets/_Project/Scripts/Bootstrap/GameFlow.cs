@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using TurretRush.Audio;
 using TurretRush.Input;
 using TurretRush.Level;
 using TurretRush.Player;
@@ -23,6 +24,7 @@ namespace TurretRush.Bootstrap
         private readonly CameraRig _camera;
         private readonly HudView _hud;
         private readonly CarView _car;
+        private readonly GameAudio _audio;
         private readonly IInputService _input;
 
         private readonly CancellationTokenSource _lifetime = new();
@@ -33,6 +35,7 @@ namespace TurretRush.Bootstrap
             CameraRig camera,
             HudView hud,
             CarView car,
+            GameAudio audio,
             IInputService input)
         {
             _session = session;
@@ -40,6 +43,7 @@ namespace TurretRush.Bootstrap
             _camera = camera;
             _hud = hud;
             _car = car;
+            _audio = audio;
             _input = input;
         }
 
@@ -75,6 +79,7 @@ namespace TurretRush.Bootstrap
 
                     _session.Halt();
                     ShowLevelReadouts(false);
+                    _audio.PlayResult(result);
 
                     await _screens.ShowResultAsync(result, cancellationToken);
                     await WaitForTapAsync(cancellationToken);

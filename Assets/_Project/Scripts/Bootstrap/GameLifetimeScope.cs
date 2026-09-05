@@ -1,3 +1,4 @@
+using TurretRush.Audio;
 using TurretRush.Combat;
 using TurretRush.Config;
 using TurretRush.Enemies;
@@ -27,6 +28,7 @@ namespace TurretRush.Bootstrap
         [SerializeField] private WeaponConfig weaponConfig;
         [SerializeField] private EnemyConfig enemyConfig;
         [SerializeField] private VfxConfig vfxConfig;
+        [SerializeField] private AudioConfig audioConfig;
 
         [Header("Scene")]
         [SerializeField] private Camera cam;
@@ -40,6 +42,7 @@ namespace TurretRush.Bootstrap
             builder.RegisterInstance(weaponConfig);
             builder.RegisterInstance(enemyConfig);
             builder.RegisterInstance(vfxConfig);
+            builder.RegisterInstance(audioConfig);
 
             builder.RegisterComponent(cam);
             builder.RegisterComponentInHierarchy<CarView>();
@@ -85,6 +88,7 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<PopupPresenter>();
             builder.RegisterEntryPoint<EnemyHealthBarPresenter>();
             builder.RegisterEntryPoint<PauseController>();
+            builder.RegisterEntryPoint<GameAudio>().AsSelf();
 
             // Last, so its Start runs after every system has placed itself.
             builder.RegisterEntryPoint<GameFlow>();

@@ -1,3 +1,4 @@
+using System;
 using TurretRush.Config;
 using TurretRush.Level;
 using TurretRush.Player;
@@ -22,6 +23,9 @@ namespace TurretRush.Combat
             _projectiles = projectiles;
             _timer = new FireTimer(config.FireInterval, config.InitialDelay);
         }
+
+        /// <summary>Raised once per round leaving the barrel.</summary>
+        public event Action Fired;
 
         public bool IsFiring { get; private set; }
 
@@ -53,6 +57,7 @@ namespace TurretRush.Combat
                 // bullet is leaving from.
                 _projectiles.Spawn(_view.MuzzlePosition, _view.AimDirection);
                 _view.PlayShot();
+                Fired?.Invoke();
             }
         }
     }

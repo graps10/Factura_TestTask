@@ -90,4 +90,4 @@ to shipping code.
 
 ## Time
 
-Roughly **9.5 hours**.
+Roughly **10.5 hours**.

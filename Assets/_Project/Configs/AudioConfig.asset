@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f17df09de5c47084689cc28aa554b74b, type: 3}
+  m_Name: AudioConfig
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.AudioConfig
+  voiceCount: 8
+  shot:
+    clip: {fileID: 8300000, guid: 12dd3645fc5a2634da3806dc420ea433, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08
+  enemyHit:
+    clip: {fileID: 8300000, guid: d4562dd2b6372cb45999b50f1ce65d02, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08
+  enemyKilled:
+    clip: {fileID: 8300000, guid: f5c38c97201630041bd2cee7968791b3, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08
+  carHit:
+    clip: {fileID: 8300000, guid: 1c6d4eaa1194e1843a2103d918a5dae4, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08
+  carDestroyed:
+    clip: {fileID: 8300000, guid: 72cfebfe4100901448e55ca5b3f497e1, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08
+  win:
+    clip: {fileID: 8300000, guid: b0352a4e84cf51948b612a84ccca9f30, type: 3}
+    volume: 0.6
+    pitchVariance: 0.08

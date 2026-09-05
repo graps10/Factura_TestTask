@@ -53,11 +53,16 @@ namespace TurretRush.UI
 
             // Time scale is global and survives into the next play session.
             Time.timeScale = 1f;
+            AudioListener.pause = false;
         }
 
         public void SetPaused(bool paused)
         {
             Time.timeScale = paused ? 0f : 1f;
+
+            // A zero time scale does not silence anything - the listener has to be
+            // paused separately, or a shot fired on the last frame plays on.
+            AudioListener.pause = paused;
             _view.SetVisible(paused);
         }
     }
