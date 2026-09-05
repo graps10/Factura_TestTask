@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1946408270955160515}
-  - component: {fileID: 6420471136480608190}
   - component: {fileID: 5139570579426016036}
   - component: {fileID: 1579744257502073540}
+  - component: {fileID: 6420471136480608190}
+  - component: {fileID: 5332218755481478900}
   m_Layer: 0
   m_Name: P_Enemy
   m_TagString: Untagged
@@ -35,19 +36,6 @@ Transform:
   - {fileID: 2141973448359340289}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6420471136480608190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47966421050083422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfaae88ab28f59646b354f178bb8aabc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Enemies.EnemyView
-  animator: {fileID: 3946131020827685804}
 --- !u!54 &5139570579426016036
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -98,6 +86,35 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &6420471136480608190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47966421050083422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfaae88ab28f59646b354f178bb8aabc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Enemies.EnemyView
+  animator: {fileID: 3946131020827685804}
+  hitFlash: {fileID: 5332218755481478900}
+--- !u!114 &5332218755481478900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47966421050083422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80cc75c31c8f9964e9060e4bf79b5d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Combat.HitFlash
+  renderers:
+  - {fileID: 2631251165229980248}
+  duration: 0.14
 --- !u!1 &184302730269118795
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c582b821c6755a740be1dbeba16e3970, type: 3}
+  m_Name: VfxConfig
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.VfxConfig
+  enemyDeathPrefab: {fileID: 7377531498186930667, guid: 08bbe6903e5bfba49947a1ca16c39e8a, type: 3}
+  poolCapacity: 12
+  poolMaxSize: 32
+  hitShakeStrength: 0.35
+  hitShakeDuration: 0.22

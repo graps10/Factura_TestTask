@@ -674,6 +674,7 @@ MonoBehaviour:
   turretConfig: {fileID: 11400000, guid: bec957df30c5cea4793cf0d222c44b10, type: 2}
   weaponConfig: {fileID: 11400000, guid: 9ff29dc853925e04482e4e485ee25842, type: 2}
   enemyConfig: {fileID: 11400000, guid: ac6e9d26ce218a64ba068d166ced6e56, type: 2}
+  vfxConfig: {fileID: 11400000, guid: df75d9fefb014d643824b6fc70cc07d9, type: 2}
   cam: {fileID: 330585545}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

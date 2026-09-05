@@ -523,6 +523,7 @@ GameObject:
   - component: {fileID: 7278282397220074072}
   - component: {fileID: 235023913647954863}
   - component: {fileID: 6521988251740155981}
+  - component: {fileID: 6736073959617260392}
   m_Layer: 6
   m_Name: P_Car
   m_TagString: Untagged
@@ -615,6 +616,27 @@ MonoBehaviour:
   wheelRadius: 0.36
   invertWheelSpin: 0
   body: {fileID: 235023913647954863}
+  hitFlash: {fileID: 6736073959617260392}
+--- !u!114 &6736073959617260392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3979641976728688488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80cc75c31c8f9964e9060e4bf79b5d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.Combat.HitFlash
+  renderers:
+  - {fileID: 8818932681034860767}
+  - {fileID: 2514756726523615448}
+  - {fileID: 1013261669807271834}
+  - {fileID: 9079963712281938860}
+  - {fileID: 1991254896221052371}
+  - {fileID: 5967925110240921239}
+  duration: 0.14
 --- !u!1 &4475913956598833773
 GameObject:
   m_ObjectHideFlags: 0
