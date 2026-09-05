@@ -14,9 +14,8 @@ namespace TurretRush.UI
 
         public void Present(Vector2 anchoredPosition, string format, int value, Color color, float scale)
         {
-            // Any tween from the previous use has to go before the new position is
-            // written, or the pooled label finishes drifting to where the last one
-            // was heading.
+            // Before the new position is written, or the pooled label finishes
+            // drifting to where the last one was heading.
             Stop();
 
             _rect.anchoredPosition = anchoredPosition;
@@ -25,8 +24,7 @@ namespace TurretRush.UI
             group.alpha = 1f;
             label.color = color;
 
-            // SetText with a format writes the number without building a string.
-            // These pop several times a second at the busiest moments.
+            // SetText with a format writes the number without allocating a string.
             label.SetText(format, value);
         }
 

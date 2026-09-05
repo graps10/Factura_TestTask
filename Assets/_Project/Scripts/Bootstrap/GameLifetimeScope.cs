@@ -14,9 +14,8 @@ using VContainer.Unity;
 namespace TurretRush.Bootstrap
 {
     /// <summary>
-    /// The single composition root of the game. Everything the gameplay needs is
-    /// registered here and nowhere else, so there is exactly one place to look to
-    /// see how the systems fit together.
+    /// The single composition root. Everything is registered here and nowhere else,
+    /// so there is one place to look to see how the game fits together.
     /// </summary>
     public sealed class GameLifetimeScope : LifetimeScope
     {
@@ -53,8 +52,7 @@ namespace TurretRush.Bootstrap
 
             builder.Register<IInputService, PointerInputService>(Lifetime.Singleton);
 
-            // The car's hit points, and the only Health the container hands out -
-            // enemies build their own, one per body, as they come out of the pool.
+            // The only Health the container hands out; enemies build their own.
             builder.Register(_ => new Health(carConfig.MaxHealth), Lifetime.Singleton);
             builder.Register(_ => new LevelProgress(levelConfig.Length), Lifetime.Singleton);
             builder.Register<CoinWallet>(Lifetime.Singleton);
@@ -62,15 +60,13 @@ namespace TurretRush.Bootstrap
 
             builder.RegisterEntryPoint<DisplaySettings>();
 
-            // Entry points run in registration order, and that order is the frame's
-            // execution order. Read top to bottom it is the shape of one frame: the
-            // car moves, the barrel is pointed, the gun fires down that barrel, the
-            // bullets already in the air advance, the enemies react to where the car
-            // now is, the road catches up, the camera looks at the result.
+            // Registration order is the frame's execution order, and reads as the
+            // shape of one frame: the car moves, the barrel is pointed, the gun fires
+            // down it, bullets already in the air advance, enemies react to where the
+            // car now is, the road catches up, the camera looks at the result.
             //
-            // It is also the order a restart runs in, since LevelSession walks every
-            // IResettable in registration order - which is what puts the car back on
-            // the start line before the ground streamer lays its tiles around it.
+            // It is also the order a restart runs in, which is what puts the car back
+            // on the start line before the streamer lays its tiles around it.
             builder.RegisterEntryPoint<CarMovement>().AsSelf();
             builder.RegisterEntryPoint<TurretAim>().AsSelf();
             builder.RegisterEntryPoint<Weapon>().AsSelf();
@@ -79,9 +75,9 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<GroundStreamer>().AsSelf();
             builder.RegisterEntryPoint<CameraRig>().AsSelf();
 
-            // Presentation only. Both hang off events rather than being called by the
-            // systems that raise them, so gameplay stays unaware that feedback exists
-            // and either could be removed without touching a rule.
+            // Presentation only, hanging off events rather than being called by the
+            // systems that raise them. Any of it could be deleted without touching a
+            // rule.
             builder.RegisterEntryPoint<VfxSystem>().AsSelf();
             builder.RegisterEntryPoint<CarFeedback>();
             builder.RegisterEntryPoint<CoinReward>().AsSelf();
@@ -90,8 +86,7 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<EnemyHealthBarPresenter>();
             builder.RegisterEntryPoint<PauseController>();
 
-            // Registered last so its Start runs after every system has placed itself,
-            // and the first thing the player sees is a settled scene.
+            // Last, so its Start runs after every system has placed itself.
             builder.RegisterEntryPoint<GameFlow>();
         }
     }

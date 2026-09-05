@@ -2,11 +2,8 @@ using UnityEngine;
 
 namespace TurretRush.Combat
 {
-    /// <summary>
-    /// A single tracer in the scene. Carries no movement of its own - the whole
-    /// flight is stepped by <see cref="ProjectileSystem"/> in one loop, so a
-    /// hundred bullets in flight cost one Update rather than a hundred.
-    /// </summary>
+    /// <summary>A single tracer. Moved by <see cref="ProjectileSystem"/>, not by
+    /// itself.</summary>
     public sealed class ProjectileView : MonoBehaviour
     {
         [SerializeField] private TrailRenderer trail;
@@ -15,9 +12,8 @@ namespace TurretRush.Combat
         {
             transform.SetPositionAndRotation(position, Quaternion.LookRotation(direction));
 
-            // Must happen after the move. A pooled trail still remembers where the
-            // bullet died last time, and reusing it without clearing paints a streak
-            // straight across the screen from the old position to the muzzle.
+            // After the move, not before: a pooled trail remembers where the last
+            // bullet died and would paint a streak from there to the muzzle.
             if (trail != null)
                 trail.Clear();
         }

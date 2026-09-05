@@ -4,9 +4,8 @@ using UnityEngine;
 namespace TurretRush.Player
 {
     /// <summary>
-    /// The car's presence in the scene. Holds scene references and knows how to
-    /// display things; it holds no rules. All movement decisions live in
-    /// <see cref="CarMovement"/>.
+    /// The car's presence in the scene. Scene references and display, no rules -
+    /// movement decisions live in <see cref="CarMovement"/>.
     /// </summary>
     public sealed class CarView : MonoBehaviour
     {
@@ -102,12 +101,10 @@ namespace TurretRush.Player
         }
 
         /// <summary>
-        /// Whether a point on the ground is inside the car's footprint.
-        ///
-        /// Resolved in code rather than through a trigger callback so a hit lands on
-        /// the exact frame the enemy arrives, at any frame rate, with no dependence
-        /// on where the physics step happened to fall. Height is ignored because
-        /// everything in this game stands on the same plane.
+        /// Whether a point on the ground is inside the car's footprint. In code rather
+        /// than through a trigger, so the hit lands on the frame the enemy arrives at
+        /// any frame rate - closing speed here is 18 m/s against a 50 Hz physics step.
+        /// Height is ignored; everything stands on one plane.
         /// </summary>
         public bool Overlaps(Vector3 worldPoint, float margin)
         {

@@ -2,11 +2,7 @@ using System;
 
 namespace TurretRush.Combat
 {
-    /// <summary>
-    /// Decides when the turret is due to fire. Kept apart from the weapon so the
-    /// rate of fire can be asserted directly instead of being eyeballed in play
-    /// mode, and so a frame hitch cannot quietly change the gun's damage output.
-    /// </summary>
+    /// <summary>Decides when the turret is due to fire.</summary>
     public sealed class FireTimer
     {
         private readonly float _interval;
@@ -35,10 +31,10 @@ namespace TurretRush.Combat
         }
 
         /// <summary>
-        /// Advances time and reports how many shots came due. The schedule is kept
-        /// as absolute times rather than a countdown that gets reset, so a long frame
-        /// pays back the shots it swallowed instead of silently dropping them, and
-        /// rounding cannot accumulate into a drifting rate of fire.
+        /// Advances time and reports how many shots came due. Absolute times rather
+        /// than a countdown reset after each shot: a long frame pays back the shots it
+        /// swallowed, and rounding cannot accumulate into a rate of fire that drifts
+        /// with the frame rate.
         /// </summary>
         public int Step(float deltaTime)
         {

@@ -7,12 +7,9 @@ using VContainer.Unity;
 
 namespace TurretRush.UI
 {
-    /// <summary>
-    /// Everything that pops up over the world: what a kill paid, and what a shot
-    /// took off. Split from the HUD presenter because the two answer different
-    /// questions - one keeps a permanent readout current, this one reacts to
-    /// moments - and because both were starting to make one class too wide.
-    /// </summary>
+    /// <summary>Everything that pops up over the world: what a kill paid, what a shot
+    /// took off, and what the car lost. The HUD presenter keeps readouts current;
+    /// this one reacts to moments.</summary>
     public sealed class PopupPresenter : IStartable, IDisposable
     {
         private readonly FloatingTextPool _popups;

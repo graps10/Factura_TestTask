@@ -9,12 +9,11 @@ using VContainer.Unity;
 namespace TurretRush.World
 {
     /// <summary>
-    /// Chase camera. Follows the car's position with damping but keeps a fixed world
-    /// rotation - inheriting the car's yaw would swing the entire screen every time
-    /// the car drifts, which reads as motion sickness rather than speed.
+    /// Chase camera. Damped follow with a fixed world rotation - inheriting the car's
+    /// yaw would swing the whole screen on every drift.
     ///
-    /// Runs as ILateTickable so it moves after the car has already been placed this
-    /// frame; doing it in Tick would always render one frame behind.
+    /// ILateTickable, so it moves after the car has been placed this frame rather than
+    /// rendering one frame behind it.
     /// </summary>
     public sealed class CameraRig : IStartable, ILateTickable
     {
@@ -39,8 +38,7 @@ namespace TurretRush.World
 
         public void LateTick()
         {
-            // Standing still during the intro. The tween owns the transform for that
-            // stretch, and two writers on one position means whichever ran last wins.
+            // The intro tween owns the transform; two writers and the last one wins.
             if (!_following)
                 return;
 
@@ -52,9 +50,8 @@ namespace TurretRush.World
                 ref _velocity,
                 _config.SmoothTime);
 
-            // The shake is added on top of the damped position instead of being
-            // tweened onto the transform. A DOTween shake would be writing to the
-            // same transform the follow writes to, and whichever ran last would win.
+            // Added on top of the damped position rather than tweened onto the
+            // transform, which the follow is already writing to.
             _camera.position = followed + EvaluateShake(deltaTime);
         }
 
@@ -63,8 +60,7 @@ namespace TurretRush.World
             if (strength <= 0f || duration <= 0f)
                 return;
 
-            // A second hit part way through the first restarts rather than stacks,
-            // so a crowd arriving at once cannot throw the camera across the screen.
+            // Restarts rather than stacks, so a crowd cannot throw the camera off.
             _shakeStrength = Mathf.Max(_shakeStrength * (_shakeRemaining > 0f ? 0.5f : 0f), strength);
             _shakeDuration = duration;
             _shakeRemaining = duration;
@@ -82,26 +78,21 @@ namespace TurretRush.World
             _camera.SetPositionAndRotation(IntroPosition(), Quaternion.Euler(_config.IntroEulerAngles));
         }
 
-        /// <summary>
-        /// Pulls back and up into the gameplay pose, and hands the transform back to
-        /// the follow when it lands. Awaited by the flow, so the hint cannot appear
-        /// over a camera that is still moving.
-        /// </summary>
+        /// <summary>Pulls back into the gameplay pose and hands the transform back to
+        /// the follow. Awaited, so the hint cannot appear over a moving camera.</summary>
         public async UniTask PlayIntroAsync(CancellationToken cancellationToken)
         {
             _camera.DOKill();
 
-            // Two tweens rather than a sequence, both aimed at the same transform and
-            // both the same length: DOKill on the transform then reaches both, which
-            // a sequence built by DOTween.Sequence() would not be caught by.
+            // Two tweens on the same transform rather than a sequence, so DOKill on
+            // that transform reaches both - a DOTween.Sequence has no target.
             _camera.DOMove(TargetPosition(), _config.IntroDuration).SetEase(_config.IntroEase);
 
             await _camera.DORotate(_config.EulerAngles, _config.IntroDuration)
                 .SetEase(_config.IntroEase)
                 .ToUniTask(cancellationToken: cancellationToken);
 
-            // Reached only when the tween completed. A cancelled one throws, and the
-            // flow that owns the token is the thing being torn down anyway.
+            // Only reached on completion; a cancelled tween throws instead.
             _velocity = Vector3.zero;
             _following = true;
         }
@@ -128,9 +119,8 @@ namespace TurretRush.World
             _shakeRemaining -= deltaTime;
             var falloff = Mathf.Clamp01(_shakeRemaining / _shakeDuration);
 
-            // Perlin rather than Random: consecutive frames stay related, so this
-            // reads as the camera being knocked about. Per-frame random values look
-            // like a rendering fault instead.
+            // Perlin, not Random: consecutive frames stay related, so it reads as a
+            // knock rather than as a rendering fault.
             var t = Time.time * _config.ShakeFrequency;
             var amplitude = _shakeStrength * falloff;
 

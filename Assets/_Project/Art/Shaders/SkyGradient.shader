@@ -1,14 +1,12 @@
 // A two-colour sky.
 //
-// A flat background colour cannot work here: the ground dissolves into fog, and
-// wherever the fog colour meets a different background colour there is a hard
-// line across the screen. Setting the horizon colour equal to the fog colour
-// makes that seam impossible - the ground fades into fog, the fog and the bottom
-// of the sky are the same colour, and the horizon stops being an edge.
+// A flat background colour cannot work: the ground dissolves into fog, and where
+// that fog colour meets a different background there is a hard line across the
+// screen. Setting the horizon colour equal to the fog colour makes the seam
+// impossible rather than hidden.
 //
-// Unity's Procedural skybox could give a gradient too, but its colours come out
-// of an atmospheric scattering model, so matching one exactly to a fog colour
-// means fighting the model. Two colours and a curve are easier to aim.
+// Unity's Procedural skybox derives its colours from an atmospheric scattering
+// model, so matching one exactly to a chosen fog colour means fighting the model.
 Shader "TurretRush/Sky Gradient"
 {
     Properties
@@ -65,8 +63,7 @@ Shader "TurretRush/Sky Gradient"
                 Varyings output;
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
 
-                // Unity draws the skybox on a mesh whose object space is the view
-                // direction, so the vertex position is the ray this pixel looks along.
+                // Object space on the skybox mesh is the view direction.
                 output.directionOS = input.positionOS.xyz;
 
                 return output;
@@ -74,9 +71,8 @@ Shader "TurretRush/Sky Gradient"
 
             half4 SkyFragment(Varyings input) : SV_Target
             {
-                // Height above the horizon, 0 at eye level and 1 straight up. The
-                // exponent decides how much of the sky the horizon colour keeps: higher
-                // values hold it down near the ground, which is what haze looks like.
+                // 0 at eye level, 1 straight up. The exponent decides how far up the
+                // haze reaches.
                 half height = saturate(normalize(input.directionOS).y - _HorizonOffset);
                 half blend = pow(height, _Exponent);
 

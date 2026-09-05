@@ -17,7 +17,13 @@ namespace TurretRush.Enemies
 
         public Vector3 ToPosition() => new(X, 0f, Z);
     }
-    
+
+    /// <summary>
+    /// Lays out the whole level's enemies from a seed, so every attempt is the same
+    /// road. The distribution is stratified - one band per enemy, jittered inside its
+    /// own band - because uniform random over the whole stretch clumps, leaving empty
+    /// ground beside walls of enemies arriving together.
+    /// </summary>
     public sealed class EnemySpawnPlanner
     {
         private readonly float _fromZ;

@@ -7,10 +7,8 @@ using VContainer.Unity;
 namespace TurretRush.Player
 {
     /// <summary>
-    /// Turns drag into barrel rotation and keeps the laser sight on the resulting
-    /// line. Everything about "where is the turret pointing" lives here, including
-    /// the beam, because the beam is that answer drawn on screen rather than a
-    /// separate concern.
+    /// Turns drag into barrel rotation. The beam lives here too, because it is the
+    /// same answer drawn on screen.
     /// </summary>
     public sealed class TurretAim : IStartable, ITickable, IResettable
     {
@@ -27,11 +25,8 @@ namespace TurretRush.Player
             _state = new TurretAimState(config.MaxYaw, config.DegreesPerScreenWidth, config.SmoothTime);
         }
 
-        /// <summary>
-        /// Off until the flow says otherwise. Aiming comes alive one beat before the
-        /// car does, while the hint is telling the player to swipe, and goes away
-        /// again the moment the level is decided.
-        /// </summary>
+        /// <summary>Off until the flow says otherwise: aiming wakes one beat before
+        /// the car, while the hint is on screen, and stops when the level is decided.</summary>
         public bool IsEnabled { get; private set; }
 
         public float CurrentYaw => _state.CurrentYaw;
@@ -42,8 +37,7 @@ namespace TurretRush.Player
         {
             IsEnabled = false;
 
-            // The beam is the sight, so it belongs to aiming. Leaving it drawn over a
-            // result screen would suggest the player can still shoot.
+            // Left drawn over a result screen it would suggest the player can shoot.
             _view.HideBeam();
         }
 
@@ -59,9 +53,8 @@ namespace TurretRush.Player
 
         public void Tick()
         {
-            // No time passed means the game is paused. Input is still arriving - the
-            // input system does not care about the time scale - so without this the
-            // player could keep swinging the barrel behind the pause menu.
+            // No time passed means paused. Input keeps arriving regardless of the
+            // time scale, so without this the barrel still swings behind the menu.
             var deltaTime = Time.deltaTime;
             if (deltaTime <= 0f)
                 return;
@@ -71,10 +64,9 @@ namespace TurretRush.Player
 
             _state.Step(deltaTime);
 
-            // Written every frame, not only while aiming is live. The pivot hangs off
-            // the bodywork, which rolls in corners, so a frame that skips this leaves
-            // the barrel drifting with the body - and the next frame that does write
-            // it snaps the turret level in one jump.
+            // Every frame, not only while aiming is live: the pivot hangs off the
+            // bodywork, and a skipped frame lets the barrel drift with the roll until
+            // the next write snaps it level in one jump.
             _view.SetYaw(_state.CurrentYaw);
 
             if (IsEnabled)
@@ -85,9 +77,8 @@ namespace TurretRush.Player
         {
             var length = _config.LaserMaxLength;
 
-            // Stopping the beam on the first enemy in the way turns it from decoration
-            // into feedback: the player can see they are on target before the shot
-            // has finished travelling.
+            // Stopping on the first enemy turns the beam from decoration into
+            // feedback: on target is visible before the shot arrives.
             if (Physics.Raycast(
                     _view.MuzzlePosition,
                     _view.AimDirection,

@@ -9,9 +9,8 @@ using UnityEngine.UI;
 namespace TurretRush.UI
 {
     /// <summary>
-    /// The three full-screen panels the game flow steps through. Each method is a
-    /// beat of that sequence and finishes when the beat is over, so the flow can be
-    /// written as straight-line awaits instead of a callback per screen.
+    /// The panels the game flow steps through. Each method is one beat and completes
+    /// when that beat is over, so the flow reads as straight-line awaits.
     /// </summary>
     public sealed class GameScreensView : MonoBehaviour
     {
@@ -69,8 +68,7 @@ namespace TurretRush.UI
 
         private void Awake()
         {
-            // Added once, for the lifetime of the view. Nothing subscribes per screen,
-            // so there is nothing to unsubscribe.
+            // Once, for the life of the view - nothing to unsubscribe.
             if (startButton != null)
                 startButton.onClick.AddListener(() => _startPressed = true);
 
@@ -86,8 +84,8 @@ namespace TurretRush.UI
             if (panel == null)
                 return;
 
-            // Raycasts are switched off before the fade rather than after, so a panel
-            // on its way out cannot swallow the tap meant for whatever comes next.
+            // Before the fade, not after, so a panel on its way out cannot swallow
+            // the tap meant for the next screen.
             panel.blocksRaycasts = interactable;
             panel.interactable = interactable;
 

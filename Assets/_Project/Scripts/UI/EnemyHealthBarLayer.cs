@@ -4,17 +4,13 @@ using UnityEngine;
 namespace TurretRush.UI
 {
     /// <summary>
-    /// Draws health bars over enemies, one canvas for all of them.
+    /// Health bars over enemies, drawn by one canvas. A world-space Canvas on the
+    /// prefab would cost one per pooled body, and a Canvas rebuilds whenever anything
+    /// on it changes - twenty rebuilds a frame during a firefight.
     ///
-    /// The obvious alternative - a world-space Canvas on the enemy prefab - costs a
-    /// separate Canvas per pooled body, and a Canvas rebuilds whenever anything on
-    /// it changes. Twenty enemies taking fire would mean twenty rebuilds a frame,
-    /// which is the most expensive thing UI does on a phone.
-    ///
-    /// The interface is immediate mode: the caller redraws whatever should be
-    /// visible each frame and anything it did not draw is hidden. Nothing has to
-    /// remember which bar belongs to which enemy, so a body returning to the pool
-    /// cannot leave a bar behind.
+    /// Immediate mode: the caller redraws what should be visible and anything it did
+    /// not draw is hidden. Nothing remembers which bar belongs to which enemy, so a
+    /// body returning to the pool cannot leave one behind.
     /// </summary>
     public sealed class EnemyHealthBarLayer : MonoBehaviour
     {
@@ -55,9 +51,8 @@ namespace TurretRush.UI
             EndFrame();
         }
 
-        // The list only ever grows, to whatever the busiest moment of the level
-        // needed. That ceiling is a couple of dozen bars, so there is nothing to be
-        // gained by giving them back.
+        // Grows to the busiest moment of the level and stays there - a couple of
+        // dozen bars, not worth handing back.
         private EnemyHealthBarView Take()
         {
             if (_used == _bars.Count)

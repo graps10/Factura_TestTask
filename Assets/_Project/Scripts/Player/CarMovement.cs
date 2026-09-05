@@ -6,10 +6,9 @@ using VContainer.Unity;
 namespace TurretRush.Player
 {
     /// <summary>
-    /// Drives the car forward and places it on the drift curve. This is the single
-    /// source of truth for how far into the level we are - the ground streamer, the
-    /// camera, the progress bar and the enemy spawner all read
-    /// <see cref="DistanceTravelled"/> rather than measuring the transform again.
+    /// Drives the car forward along the drift curve, and is the single source of
+    /// truth for how far into the level it is: the streamer, the camera, the progress
+    /// bar and the spawner all read <see cref="DistanceTravelled"/>.
     /// </summary>
     public sealed class CarMovement : IStartable, ITickable, IResettable
     {
@@ -55,9 +54,8 @@ namespace TurretRush.Player
             _view.SetExhaust(0f);
         }
 
-        // Placing the car is a scene side effect, so it happens here and not in the
-        // constructor. Registered first in GameLifetimeScope, which makes this the
-        // first entry point to run - everything downstream sees a positioned car.
+        // Not in the constructor: placing the car is a scene side effect. Registered
+        // first, so everything downstream starts with a positioned car.
         public void Start() => ResetToStart();
 
         public void Tick() => Step(Time.deltaTime);
@@ -77,8 +75,8 @@ namespace TurretRush.Player
                 _view.SpinWheels(delta);
             }
 
-            // Outside the speed check on purpose: the body has to settle back level
-            // and the exhaust has to die down while the car is braking to a stop.
+            // Outside the speed check: the body still has to settle level and the
+            // exhaust to die down while the car brakes.
             UpdateBodywork(deltaTime);
         }
 
@@ -87,13 +85,9 @@ namespace TurretRush.Player
             var speedFactor = _config.Speed <= 0f ? 0f : Speed / _config.Speed;
             var heading = _drift.HeadingDegrees(DistanceTravelled, _config.HeadingLookAhead);
 
-            // Scaled by speed, because roll comes from cornering and a parked car does
-            // not corner. Without it the start line is already six degrees into the
-            // first bend, and the car sits leaning while it waits for the player.
-            //
-            // Damped rather than driven straight from the heading, so the body lags the
-            // steering slightly - weight taking a moment to transfer, rather than the
-            // whole car snapping to a new angle.
+            // Scaled by speed, because roll comes from cornering: the start line sits
+            // six degrees into the first bend, so without this a parked car leans while
+            // it waits. Damped as well, so weight takes a moment to transfer.
             _bank = Mathf.SmoothDamp(
                 _bank,
                 heading * _config.BankPerHeadingDegree * speedFactor,

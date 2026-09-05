@@ -7,9 +7,8 @@ using VContainer.Unity;
 namespace TurretRush.Combat
 {
     /// <summary>
-    /// Fires on its own once the level starts - the player aims, the gun keeps
-    /// time. Registered after <see cref="TurretAim"/> so shots leave a barrel that
-    /// has already been pointed this frame rather than trailing the beam by one.
+    /// Fires on its own once the level starts; the player only aims. Registered after
+    /// <see cref="TurretAim"/> so shots leave a barrel already pointed this frame.
     /// </summary>
     public sealed class Weapon : IStartable, ITickable, IResettable
     {
@@ -50,8 +49,8 @@ namespace TurretRush.Combat
             var shots = _timer.Step(Time.deltaTime);
             for (var i = 0; i < shots; i++)
             {
-                // Spawned before the kick, so the bullet leaves the barrel where the
-                // player was aiming rather than where the recoil has just put it.
+                // Spawned before the kick, so the recoil cannot move the muzzle the
+                // bullet is leaving from.
                 _projectiles.Spawn(_view.MuzzlePosition, _view.AimDirection);
                 _view.PlayShot();
             }

@@ -7,7 +7,11 @@ using VContainer.Unity;
 namespace TurretRush.UI
 {
     /// <summary>
-    /// Pause, in full.
+    /// Pause, in full. It is this small because every gameplay system already steps
+    /// itself by Time.deltaTime, so zeroing the time scale stops the car, the enemies,
+    /// the bullets and the rate of fire at once. The two things it does not stop are
+    /// handled where they live: UI tweens run unscaled, and TurretAim ignores a frame
+    /// in which no time passed.
     /// </summary>
     public sealed class PauseController : IStartable, IResettable, IDisposable
     {
@@ -49,8 +53,7 @@ namespace TurretRush.UI
             if (_view.ResumeButton != null)
                 _view.ResumeButton.onClick.RemoveListener(_onResumePressed);
 
-            // Time scale is global and survives leaving play mode into the next
-            // entry, so it is put back no matter how the scope goes away.
+            // Time scale is global and survives into the next play session.
             Time.timeScale = 1f;
         }
 

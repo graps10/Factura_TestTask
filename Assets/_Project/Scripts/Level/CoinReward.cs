@@ -7,10 +7,9 @@ using VContainer.Unity;
 namespace TurretRush.Level
 {
     /// <summary>
-    /// Pays out for kills. The third listener on EnemySystem.Killed, alongside the
-    /// death particles and the kill tally - which is the point of putting that event
-    /// on the system rather than on each body: adding a reason to care about a death
-    /// costs one subscription, not a change to the enemy.
+    /// Pays out for kills. The third listener on EnemySystem.Killed, next to the
+    /// debris and the tally - which is why that event lives on the system: a new
+    /// reason to care about a death costs one subscription, not a change to the enemy.
     /// </summary>
     public sealed class CoinReward : IStartable, IResettable, IDisposable
     {

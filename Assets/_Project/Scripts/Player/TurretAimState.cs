@@ -3,11 +3,9 @@ using UnityEngine;
 namespace TurretRush.Player
 {
     /// <summary>
-    /// Where the barrel is pointing, in world yaw degrees, with zero meaning
-    /// straight down the road. World rather than car-local on purpose: the car
-    /// weaves as it drives, and a barrel parented to its rotation would swing away
-    /// from wherever the player left it every time the body turned. Writing a world
-    /// rotation cancels the car's yaw for free.
+    /// Where the barrel points, in world yaw degrees, zero being straight down the
+    /// road. World rather than car-local: the car weaves as it drives, and a barrel
+    /// inheriting that rotation would wander away from wherever the player left it.
     /// </summary>
     public sealed class TurretAimState
     {

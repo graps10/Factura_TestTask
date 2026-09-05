@@ -1,16 +1,13 @@
-// A deliberately small URP lit shader for this game's flat, palette-textured art.
+// A small lit shader for this game's flat, palette-textured art.
 //
-// URP/Lit is a physically based shader with metallic, smoothness, normal maps,
-// occlusion, detail maps and per-pixel additional lights. None of that is visible
-// on a model whose whole surface is a single flat colour sampled from an 8x8
-// palette, and all of it is paid for per pixel on a phone. This does one
-// directional light with shadows plus ambient, which is exactly what the look
-// needs.
+// It exists for _FlashAmount: a per-renderer white-out for hit feedback. URP/Lit
+// has no such parameter, and faking one through emission only washes the colour
+// out rather than replacing it.
 //
-// The reason it exists rather than being URP/Lit, though, is _FlashAmount: a
-// per-renderer white-out for hit feedback. URP/Lit has no such parameter, and
-// faking one through emission would need the emission keyword enabled and still
-// only washes the colour out rather than replacing it.
+// Doing the lighting by hand is the other half. URP/Lit is physically based -
+// metallic, smoothness, normal, occlusion and detail maps, per-pixel additional
+// lights - and none of it shows on a surface that is one flat cell of an 8x8
+// palette, while all of it is paid for per pixel on a phone.
 Shader "TurretRush/Palette Flash"
 {
     Properties
@@ -36,9 +33,8 @@ Shader "TurretRush/Palette Flash"
             "Queue" = "Geometry"
         }
 
-        // Declared once for every pass. The SRP Batcher requires each pass to
-        // present an identical UnityPerMaterial buffer, and sharing one block is
-        // the only way to be sure they cannot drift apart.
+        // Shared by every pass: the SRP Batcher needs an identical UnityPerMaterial
+        // buffer in each, and one declaration is the only way they cannot drift.
         HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
@@ -121,8 +117,8 @@ Shader "TurretRush/Palette Flash"
 
                 half3 color = albedo.rgb * (mainLight.color * diffuse + ambient);
 
-                // Replace rather than add, so a hit reads as a clean white silhouette
-                // no matter how dark the surface underneath happens to be.
+                // Replaced, not added, so a hit reads as a clean white silhouette
+                // whatever is underneath.
                 color = lerp(color, _FlashColor.rgb, saturate(_FlashAmount));
                 color = MixFog(color, input.fogFactor);
 
@@ -245,8 +241,7 @@ Shader "TurretRush/Palette Flash"
         }
     }
 
-    // No FallBack on purpose. Falling back to URP/Lit would silently render a
-    // working but flash-less material if this SubShader ever failed to compile,
-    // and the bug would surface as "the hit feedback stopped working" rather than
-    // as a shader error.
+    // No FallBack on purpose: falling back to URP/Lit would silently render a
+    // working but flash-less material, and the bug would surface as "the hit
+    // feedback stopped working" rather than as a shader error.
 }

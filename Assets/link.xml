@@ -1,24 +1,16 @@
 <linker>
   <!--
-    Managed Stripping Level is set to High. IL2CPP strips any method it cannot
-    prove is reachable from static analysis of the IL.
+    Managed stripping is set to High, and VContainer builds every registered type
+    through reflection (Runtime/Internal/ReflectionInjector.cs). Nothing in our
+    source constructs those types directly, so IL2CPP cannot prove the
+    constructors are reachable and strips them - which never reproduces in the
+    editor, only on device.
 
-    VContainer instantiates every registered type through reflection —
-    VContainer/Runtime/Internal/ReflectionInjector.cs:
+    VContainer's source generator would emit injectors IL2CPP can trace and make
+    this file unnecessary, but it is not part of the git-URL distribution.
 
-        injectTypeInfo.InjectConstructor.ConstructorInfo.Invoke(parameterValues)
-
-    There is no direct `new` for our systems anywhere in the source, so the
-    stripper removes their constructors and the container throws at runtime.
-    This never reproduces in the Editor (Mono, no stripping) — only on device.
-
-    VContainer's source generator would emit "<TypeName>GeneratedInjector"
-    classes that IL2CPP *can* trace (see InjectorCache.GetOrBuild), which would
-    make this file unnecessary. It is not shipped in the git-URL distribution
-    we install from, so we are on the reflection path and preserve explicitly.
-
-    UniTask and DOTween are intentionally absent: UniTask uses no reflection,
-    and DOTween marks its own reflection entry points with [Preserve].
+    UniTask and DOTween are absent on purpose: UniTask uses no reflection, and
+    DOTween marks its own entry points with [Preserve].
   -->
   <assembly fullname="VContainer" preserve="all" />
   <assembly fullname="TurretRush.Game" preserve="all" />

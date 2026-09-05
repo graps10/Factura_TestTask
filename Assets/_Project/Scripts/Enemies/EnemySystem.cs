@@ -12,11 +12,9 @@ using Object = UnityEngine.Object;
 namespace TurretRush.Enemies
 {
     /// <summary>
-    /// Owns the whole enemy population: the plan, the pool, and the behaviour of
-    /// every enemy currently on screen. One system stepping a list rather than a
-    /// MonoBehaviour per enemy, for the same reasons as the projectiles - and here
-    /// it also keeps the aggro rule in one readable place instead of scattered
-    /// across forty instances.
+    /// Owns the enemy population: the plan, the pool and the behaviour. One system
+    /// over a list rather than a MonoBehaviour per body, which also keeps the aggro
+    /// rule in one place instead of spread across forty instances.
     /// </summary>
     public sealed class EnemySystem : IStartable, ITickable, IResettable, IDisposable
     {
@@ -40,22 +38,17 @@ namespace TurretRush.Enemies
             _carHealth = carHealth;
         }
 
-        /// <summary>Raised once per enemy shot dead, with where it fell. The death
-        /// particles, the coin counter and the kill tally all hang off this.</summary>
+        /// <summary>Raised once per enemy shot dead, with where it fell. The debris,
+        /// the payout and the tally all hang off this.</summary>
         public event Action<Vector3> Killed;
 
-        /// <summary>Where the car was struck and for how much, for the damage number.
-        /// Raised here because this is the only place that knows where the enemy was
-        /// standing when it connected.</summary>
+        /// <summary>Where the car was struck and for how much.</summary>
         public event Action<Vector3, int> CarHit;
 
         public int AliveCount => _live.Count;
 
-        /// <summary>
-        /// What an overlay needs to draw one enemy, without handing out the mutable
-        /// entry behind it. Index based rather than an enumerable so a per-frame walk
-        /// over every live enemy allocates nothing.
-        /// </summary>
+        /// <summary>What an overlay needs to draw one enemy. By index, so a per-frame
+        /// walk over the whole population allocates nothing.</summary>
         public EnemySnapshot GetLive(int index)
         {
             var enemy = _live[index];
@@ -65,10 +58,10 @@ namespace TurretRush.Enemies
         public int KillCount { get; private set; }
 
         /// <summary>
-        /// Enemies are placed on the road as soon as the level is reset, so the
-        /// player sees them waiting during the intro, but they do not think until the
-        /// level actually starts. Without this they would keep charging through the
-        /// result screen and land hits on a car whose fate is already decided.
+        /// Bodies are placed as soon as the level resets, so the intro looks out over
+        /// a populated road, but they do not think until it starts. Without the gate
+        /// they kept charging through the result screen and landing hits on a car
+        /// whose fate was already decided.
         /// </summary>
         public bool IsRunning { get; private set; }
 
@@ -78,10 +71,9 @@ namespace TurretRush.Enemies
         {
             IsRunning = false;
 
-            // Speed is pushed to the animator from Tick, so stopping Tick leaves the
-            // blend tree on whatever it last heard - a charging enemy would run on the
-            // spot for as long as the result screen is up. Nothing will speak to the
-            // animator again, so the last word has to be the right one.
+            // Nothing speaks to the animator once Tick stops, so the last word has to
+            // be the right one - otherwise a charging enemy runs on the spot under the
+            // result screen.
             for (var i = 0; i < _live.Count; i++)
                 _live[i].View.SetSpeed(0f);
         }
@@ -133,9 +125,8 @@ namespace TurretRush.Enemies
             KillCount = 0;
             BuildPlan();
 
-            // One activation pass while stopped, so the opening shot of the level
-            // already has enemies standing on the road ahead instead of them popping
-            // in the moment the car starts moving.
+            // One pass while stopped, so enemies are already standing on the road
+            // rather than popping in when the car pulls away.
             ActivateAhead(_car.Root.position.z);
         }
 
@@ -162,8 +153,7 @@ namespace TurretRush.Enemies
 
         private void ActivateAhead(float carZ)
         {
-            // The plan is sorted by Z, so this walks forward once over the level
-            // instead of scanning every remaining spawn point every frame.
+            // The plan is sorted, so this walks forward once instead of scanning.
             var horizon = carZ + _config.ActivationLead;
 
             while (_cursor < _plan.Count && _plan[_cursor].Z <= horizon)
@@ -189,8 +179,7 @@ namespace TurretRush.Enemies
                 Health = health,
                 Anchor = position,
                 Position = position,
-                // Derived from the index so a given enemy wanders the same way every
-                // attempt, keeping the whole level reproducible.
+                // From the index, so a given enemy wanders identically every attempt.
                 Phase = index * 1.37f
             });
         }
@@ -223,16 +212,14 @@ namespace TurretRush.Enemies
             enemy.View.MoveTo(next);
             enemy.View.FaceDirection(next - previous, _config.TurnSpeed, deltaTime);
 
-            // Speed is measured rather than assumed, so the blend tree reacts to what
-            // the body is actually doing - the idle shuffle drives the walk, the
-            // charge drives the run, and neither needs its own animator flag.
+            // Measured, not assumed: the blend tree reacts to actual displacement, so
+            // no animator flag can disagree with what the body is doing.
             enemy.View.SetSpeed(deltaTime > 0f ? Vector3.Distance(previous, next) / deltaTime : 0f);
 
             if (enemy.IsCharging && _car.Overlaps(next, _config.ImpactMargin))
             {
-                // The enemy spends itself on the hit. That is the whole melee rule -
-                // no attack cooldown, no re-engage, no enemy stuck grinding against
-                // the bumper for the rest of the level.
+                // Spends itself on the hit. That is the whole melee rule: no cooldown,
+                // no re-engage, nothing grinding against the bumper all level.
                 _carHealth.TakeDamage(_config.DamageToCar);
                 CarHit?.Invoke(next, _config.DamageToCar);
                 Release(index);
@@ -249,9 +236,8 @@ namespace TurretRush.Enemies
 
         private Vector3 Wander(LiveEnemy enemy)
         {
-            // Two sines at unrelated rates: a small, smooth, endlessly varied shuffle
-            // around the spawn point that never needs a destination or a timer, and
-            // that replays identically because it is a function of age and phase.
+            // Two sines at unrelated rates: a smooth shuffle with no destination and
+            // no timer, replayed identically because it is a function of age.
             var t = enemy.Age * _config.WanderFrequency;
 
             return enemy.Anchor + new Vector3(

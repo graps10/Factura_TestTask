@@ -9,13 +9,11 @@ using VContainer.Unity;
 namespace TurretRush.Player
 {
     /// <summary>
-    /// Turns damage to the car into something the player can feel: the body flashes
-    /// on a hit, and on the last one it disappears in an explosion.
+    /// Turns damage into something the player can feel: the body flashes, and on the
+    /// last hit it goes up in an explosion.
     ///
-    /// Kept apart from the car and the camera because it belongs to neither. The car
-    /// does not need to know a camera exists, and the camera does not need to know
-    /// what hit points are; this is the one place that joins them, and deleting it
-    /// would leave the game working and silent.
+    /// Separate from both the car and the camera because it belongs to neither -
+    /// deleting it would leave the game working and silent.
     /// </summary>
     public sealed class CarFeedback : IStartable, IResettable, IDisposable
     {
@@ -63,8 +61,7 @@ namespace TurretRush.Player
 
         private void OnHealthChanged(int current, int max)
         {
-            // Health also reports going up, which is what a level restart looks like.
-            // Only a drop is an impact.
+            // Health also reports going up - that is a restart, not an impact.
             var damaged = current < _lastSeen;
             _lastSeen = current;
 
@@ -77,9 +74,8 @@ namespace TurretRush.Player
 
         private void OnDied()
         {
-            // Hidden rather than destroyed: the same car drives the next attempt, and
-            // Health guarantees this fires exactly once per life, so there is no
-            // second explosion to guard against.
+            // Hidden, not destroyed: the same car drives the next attempt. Died fires
+            // exactly once per life, so no already-exploded flag is needed.
             _car.SetVisible(false);
             _vfx.PlayCarExplosion(_car.Root.position);
             _camera.Shake(_config.ExplosionShakeStrength, _config.ExplosionShakeDuration);

@@ -52,8 +52,7 @@ namespace TurretRush.UI
 
             coinLabel.SetText("{0}", balance);
 
-            // Not on the way back to zero - that is a level restart, not a payout, and
-            // a counter that jumps while resetting reads as a reward for nothing.
+            // Not on the way back to zero: that is a restart, not a payout.
             if (coinPunch <= 0f || balance == 0)
                 return;
 
@@ -65,11 +64,8 @@ namespace TurretRush.UI
                 .SetUpdate(true);
         }
 
-        /// <summary>
-        /// Alpha rather than SetActive: the pause button is a child, and deactivating
-        /// the object it lives on would make the container unable to find it again if
-        /// anything ever looked for it by hierarchy.
-        /// </summary>
+        /// <summary>Alpha rather than SetActive, so the container can still find the
+        /// components under here by hierarchy.</summary>
         public void SetVisible(bool visible)
         {
             if (group == null)

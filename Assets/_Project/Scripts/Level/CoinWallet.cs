@@ -2,11 +2,8 @@ using System;
 
 namespace TurretRush.Level
 {
-    /// <summary>
-    /// Coins earned during a run. Plain state with a change event, so the counter
-    /// on screen and the floating "+10" are both just listeners and neither has to
-    /// be told when to refresh.
-    /// </summary>
+    /// <summary>Coins earned during a run. Plain state with a change event, so the
+    /// counter and the floating label are both just listeners.</summary>
     public sealed class CoinWallet
     {
         public event Action<int> Changed;

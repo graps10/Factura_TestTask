@@ -10,9 +10,8 @@ using Object = UnityEngine.Object;
 namespace TurretRush.Combat
 {
     /// <summary>
-    /// Owns every bullet in flight. One system stepping a flat list beats a
-    /// MonoBehaviour per bullet: no per-object Update crossing into native code, and
-    /// the pool means a whole level of shooting allocates nothing after warm-up.
+    /// Owns every bullet in flight. One system over a flat list rather than a
+    /// MonoBehaviour per bullet, so a hundred rounds in the air cost one Update.
     /// </summary>
     public sealed class ProjectileSystem : IStartable, ITickable, IResettable, IDisposable
     {
@@ -24,11 +23,8 @@ namespace TurretRush.Combat
 
         public ProjectileSystem(WeaponConfig config) => _config = config;
 
-        /// <summary>
-        /// Where a shot landed and for how much. Raised from here rather than from the
-        /// body that was hit, because this is the only place that knows the point of
-        /// impact - which is where a damage number belongs, not at the target's feet.
-        /// </summary>
+        /// <summary>Where a shot landed and for how much. Raised here because this is
+        /// the only place that knows the point of impact.</summary>
         public event Action<Vector3, int> Hit;
 
         public int LiveCount => _live.Count;
@@ -79,9 +75,9 @@ namespace TurretRush.Combat
             {
                 var shot = _live[i];
 
-                // Sweeping from this frame's position to the next, rather than testing
-                // the point it lands on, is what stops a 90 m/s bullet from stepping
-                // clean through a body between two frames.
+                // Swept from this frame's position to the next. At 90 m/s a bullet
+                // covers 1.5 m per frame against a body half a metre thick, so testing
+                // the point it lands on would pass straight through.
                 if (Physics.SphereCast(
                         shot.Position,
                         _config.Radius,
@@ -96,10 +92,9 @@ namespace TurretRush.Combat
                     {
                         damageable.TakeDamage(_config.Damage);
 
-                        // Only while the target is still standing. A kill already says
-                        // everything - the body drops, the debris flies, the coins come
-                        // up - and a damage number landing on top of the payout is two
-                        // labels fighting over the same patch of screen.
+                        // Only while the target still stands. A kill already shows the
+                        // body drop, the debris and the payout; a number on top of that
+                        // lands on the coins.
                         if (damageable.IsAlive)
                             Hit?.Invoke(hit.point, _config.Damage);
                     }

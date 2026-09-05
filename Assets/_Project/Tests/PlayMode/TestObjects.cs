@@ -5,19 +5,13 @@ using UnityEngine;
 namespace TurretRush.Tests.PlayMode
 {
     /// <summary>
-    /// Builds configs for tests.
+    /// Builds configs for tests by reflection, rather than adding setters or a test
+    /// constructor to shipping code. Renaming a serialised field breaks these calls,
+    /// which is correct rather than fragile - it already breaks every .asset storing
+    /// that field, and the test just says so sooner.
     ///
-    /// Config assets keep their fields private and expose read-only properties,
-    /// which is right for production and inconvenient here. The alternative - adding
-    /// setters or a test constructor to every config - would put test scaffolding in
-    /// shipping code, so the test assembly reaches in with reflection instead.
-    ///
-    /// Renaming a serialised field breaks these calls. That is correct rather than
-    /// fragile: renaming a serialised field already breaks every .asset that stores
-    /// it, so the test failing is the same warning arriving earlier.
-    ///
-    /// Only overrides are passed. Everything else keeps the field initialiser the
-    /// config declares, so a fixture states exactly what the test cares about.
+    /// Only overrides are passed; everything else keeps the config's own default, so
+    /// a fixture states exactly what its test depends on.
     /// </summary>
     internal static class TestObjects
     {

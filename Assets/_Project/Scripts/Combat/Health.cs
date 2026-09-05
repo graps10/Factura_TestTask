@@ -4,7 +4,6 @@ namespace TurretRush.Combat
 {
     public sealed class Health : IDamageable
     {
-        /// <summary>Raised on every actual change. Arguments are (current, max).</summary>
         public event Action<int, int> Changed;
 
         /// <summary>Raised exactly once, on the hit that brings current to zero.</summary>
@@ -35,10 +34,7 @@ namespace TurretRush.Combat
                 Died?.Invoke();
         }
 
-        /// <summary>
-        /// Restores to full, optionally with a new maximum. Called when an
-        /// instance is taken from a pool or when the level restarts.
-        /// </summary>
+        /// <summary>Restores to full. Used when a body comes back out of a pool.</summary>
         public void Reset(int max)
         {
             if (max <= 0)

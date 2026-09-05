@@ -3,14 +3,12 @@ using System;
 namespace TurretRush.World
 {
     /// <summary>
-    /// Ring buffer of ground tile positions along Z. Once a tile falls far enough
-    /// behind the viewer it is teleported to the front of the queue, so a handful of
-    /// tiles cover an arbitrarily long level with no instantiation after startup.
+    /// Ring buffer of ground tile positions: a tile that falls far enough behind is
+    /// teleported to the front, so four of them cover any length of level.
     ///
-    /// Deliberately knows nothing about Transforms or Unity: this is the part that
-    /// can actually be wrong (gaps in the road, a tile popping in on camera), so it
-    /// is kept as plain arithmetic that can be driven across thousands of simulated
-    /// metres in a unit test.
+    /// Knows nothing about Transforms on purpose. A seam in the road only shows up
+    /// hundreds of metres in, so this is kept as arithmetic a test can drive across
+    /// kilometres in milliseconds.
     /// </summary>
     public sealed class TileCycler
     {
@@ -69,8 +67,7 @@ namespace TurretRush.World
             var span = _tileLength * _z.Length;
             var moved = 0;
 
-            // A loop rather than a single check: one long frame, or a teleport on
-            // restart, can leave several tiles behind at once.
+            // A loop, not a branch: one long frame or a restart can strand several.
             while (viewerZ - _z[_back] > _recycleDistance)
             {
                 _z[_back] += span;

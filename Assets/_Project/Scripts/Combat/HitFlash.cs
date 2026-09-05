@@ -4,9 +4,10 @@ using UnityEngine;
 namespace TurretRush.Combat
 {
     /// <summary>
-    /// Whites out a body for a moment when it is hit, by driving _FlashAmount on
-    /// the Palette Flash shader.
-    ///
+    /// Whites out a body for a moment when it is hit, by driving _FlashAmount on the
+    /// Palette Flash shader. Written through a MaterialPropertyBlock, because
+    /// touching renderer.material would clone the shared material once per pooled
+    /// body.
     /// </summary>
     public sealed class HitFlash : MonoBehaviour
     {
@@ -47,19 +48,13 @@ namespace TurretRush.Combat
 
         private void Awake() => _block = new MaterialPropertyBlock();
 
-        // Covers the pool: a body released mid-flash would otherwise come back white,
-        // and its tween would keep writing to a renderer nobody is looking at.
+        // A body released mid-flash would come back out of the pool still white.
         private void OnDisable() => Clear();
 
-        /// <summary>
-        /// IsActive() rather than a plain null check. A tween that finished on its own
-        /// is auto-killed by DOTween, and the field is left pointing at a dead one.
-        /// Right now DOTween is configured with recycling off, so killing a dead tween
-        /// is merely pointless - but recycling is a single checkbox in the DOTween
-        /// panel, and with it on that stale reference would eventually name a tween
-        /// belonging to something else entirely. This kills only a tween that is still
-        /// ours.
-        /// </summary>
+        // IsActive() rather than a null check: a finished tween is auto-killed and
+        // leaves the field pointing at a dead one. Harmless while DOTween recycling
+        // is off, but recycling is one checkbox away, and then that stale reference
+        // would name a tween belonging to something else.
         private void KillTween()
         {
             if (_tween.IsActive())

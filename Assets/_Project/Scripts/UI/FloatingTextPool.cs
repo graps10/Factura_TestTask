@@ -4,11 +4,8 @@ using UnityEngine.Pool;
 
 namespace TurretRush.UI
 {
-    /// <summary>
-    /// Pops a label over a point in the world. Lives on the canvas because every
-    /// part of it is presentation: pooling labels, turning a world position into a
-    /// canvas one, and animating the result.
-    /// </summary>
+    /// <summary>Pops a label over a point in the world. On the canvas, because all of
+    /// it is presentation: pooling, projection and animation.</summary>
     public sealed class FloatingTextPool : MonoBehaviour
     {
         [SerializeField] private Canvas canvas;
@@ -93,8 +90,8 @@ namespace TurretRush.UI
             var view = _pool.Get();
             view.Present(point, format, value, color, scale);
 
-            // Released by the fade's own completion rather than by a timer somewhere
-            // else, so retuning the animation cannot leave labels stuck on screen.
+            // Released by its own fade, not a timer elsewhere, so retuning the
+            // animation cannot strand labels on screen.
             view.Play(rise, duration).OnComplete(() => _pool.Release(view));
         }
     }

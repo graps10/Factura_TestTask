@@ -13,9 +13,9 @@ namespace TurretRush.Vfx
     /// <summary>
     /// Plays and recycles one-shot particle bursts.
     ///
-    /// It listens to EnemySystem.Killed rather than to each enemy's own death. One
-    /// subscription for the lifetime of the game cannot leak; forty taken and
-    /// dropped as bodies cycle through a pool very much can.
+    /// Listens to EnemySystem.Killed rather than to each enemy's own death: one
+    /// subscription for the life of the game cannot leak, forty cycling through a pool
+    /// very much can.
     /// </summary>
     public sealed class VfxSystem : IStartable, ITickable, IResettable, IDisposable
     {
@@ -88,10 +88,8 @@ namespace TurretRush.Vfx
                 Object.Destroy(_root.gameObject);
         }
 
-        /// <summary>
-        /// Each playing effect remembers which pool it came from, so one list and one
-        /// timer serve every kind of burst - adding another is a pool and a method.
-        /// </summary>
+        /// <summary>Each effect remembers its own pool, so one list and one timer
+        /// serve every kind of burst.</summary>
         private void Play(ObjectPool<ParticleSystem> pool, ParticleSystem prefab, Vector3 position)
         {
             if (prefab == null)
@@ -100,8 +98,8 @@ namespace TurretRush.Vfx
             var system = pool.Get();
             system.transform.position = position;
 
-            // Clearing first drops any particles still alive from the previous use,
-            // which would otherwise appear at the new position for one frame.
+            // Drops particles left from the previous use, which would otherwise show
+            // at the new position for a frame.
             system.Clear(true);
             system.Play(true);
 
@@ -113,11 +111,8 @@ namespace TurretRush.Vfx
             });
         }
 
-        /// <summary>
-        /// Taken from the particle system itself rather than from a field in the
-        /// config, so retiming the effect in the editor cannot leave the pool
-        /// recycling it while it is still visible.
-        /// </summary>
+        /// <summary>From the effect itself, not a config field, so retiming it in the
+        /// editor cannot leave the pool reclaiming it while it is still visible.</summary>
         private static float LifetimeOf(ParticleSystem system)
         {
             var main = system.main;

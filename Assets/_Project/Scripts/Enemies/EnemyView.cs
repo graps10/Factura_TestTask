@@ -5,9 +5,9 @@ using UnityEngine;
 namespace TurretRush.Enemies
 {
     /// <summary>
-    /// One enemy's body in the scene: the collider bullets sweep against and the
-    /// animator that shows what it is doing. It carries no hit points and no
-    /// behaviour - <see cref="EnemySystem"/> owns both and binds them on spawn.
+    /// One enemy's body: the collider bullets sweep against and the animator that
+    /// shows what it is doing. Hit points and behaviour belong to
+    /// <see cref="EnemySystem"/>, which binds them on spawn.
     /// </summary>
     public sealed class EnemyView : MonoBehaviour, IDamageable
     {
@@ -33,18 +33,13 @@ namespace TurretRush.Enemies
 
         public void Bind(IDamageable target) => _target = target;
 
-        /// <summary>
-        /// Cuts the body loose from its hit points. A bullet resolved later in the
-        /// same frame would otherwise land on an enemy that is already back in the
-        /// pool, and damage whoever is unlucky enough to be spawned into that body
-        /// next.
-        /// </summary>
+        /// <summary>Cuts the body loose from its hit points, so a bullet resolved
+        /// later in the same frame cannot wound whoever is spawned into it next.</summary>
         public void Unbind() => _target = null;
 
         public void TakeDamage(int amount)
         {
-            // Checked before forwarding so an already-dead body does not blink at a
-            // bullet that was in flight when it died.
+            // So a dead body does not blink at a bullet that was already in the air.
             if (_target == null || !_target.IsAlive)
                 return;
 
@@ -57,16 +52,11 @@ namespace TurretRush.Enemies
         }
 
         /// <summary>
-        /// A short jerk backwards, layered over whatever the animator is doing rather
-        /// than replacing it.
-        ///
-        /// A Mixamo hit clip would have to live on a masked override layer, and an
-        /// override layer with an empty default state overrides the base with a
-        /// default pose - so idle enemies would stand in a T-pose until shot. Getting
-        /// that right needs the layer weight driven from code, which is more moving
-        /// parts than this effect is worth. It would also fight the gameplay: three
-        /// hits kill, fired 0.22 s apart, so a 0.8 s clip would never finish and the
-        /// enemy would simply stop charging.
+        /// A jerk on the animated child's own local rotation, which the animator does
+        /// not write to - so it layers over the run instead of interrupting it. An
+        /// animation clip would need a masked override layer, and such a layer replaces
+        /// the base with a default pose in its empty state: idle enemies would stand in
+        /// a T-pose until shot.
         /// </summary>
         private void PlayHitReaction()
         {
@@ -75,8 +65,7 @@ namespace TurretRush.Enemies
 
             StopHitReaction();
 
-            // Negative pitch tips the top away from the car, which is where the shot
-            // came from for anything actually charging at it.
+            // Negative pitch tips away from the car, where the shot came from.
             _hitTween = body.DOPunchRotation(
                 new Vector3(-hitTiltDegrees, 0f, 0f),
                 hitDuration,
@@ -103,8 +92,8 @@ namespace TurretRush.Enemies
             if (animator == null)
                 return;
 
-            // A pooled animator resumes wherever the previous occupant left off,
-            // which shows up as enemies appearing mid-stride or frozen in a pose.
+            // A pooled animator otherwise resumes where the previous occupant left
+            // off, and the enemy appears mid-stride.
             animator.Rebind();
             animator.Update(0f);
         }
@@ -129,8 +118,7 @@ namespace TurretRush.Enemies
 
         public void MoveTo(Vector3 position) => transform.position = position;
 
-        // A body released mid-flinch would otherwise come back out of the pool still
-        // leaning, with a tween writing into it.
+        // A body released mid-flinch would come back out of the pool still leaning.
         private void OnDisable() => StopHitReaction();
     }
 }

@@ -55,12 +55,9 @@ namespace TurretRush.Player
         }
 
         /// <summary>
-        /// Recoil is a position punch, not a rotation one, and that is the whole
-        /// reason it is safe: DOPunchPosition moves localPosition, so the muzzle -
-        /// a child of the mesh - slides back a few centimetres while its forward axis
-        /// is untouched. A rotation punch would tilt the bore, and the barrel already
-        /// sits close enough to the top of an enemy that a couple of degrees would
-        /// start throwing shots over their heads.
+        /// A position punch, not a rotation one: DOPunchPosition moves localPosition,
+        /// so the muzzle slides back with its forward axis untouched. Tilting the bore
+        /// would throw shots over the enemies it already passes close above.
         /// </summary>
         public void PlayShot()
         {
@@ -98,9 +95,8 @@ namespace TurretRush.Player
             if (laser == null)
                 return;
 
-            // Enforced here rather than trusted to the prefab: a line renderer left in
-            // local space would drag the beam along with the turret's own rotation and
-            // bend it, which is a confusing thing to debug from the Game view.
+            // Not trusted to the prefab: a line renderer left in local space drags the
+            // beam along with the turret and bends it.
             laser.useWorldSpace = true;
             laser.positionCount = 2;
         }

@@ -8,11 +8,8 @@ using Object = UnityEngine.Object;
 
 namespace TurretRush.World
 {
-    /// <summary>
-    /// Thin adapter between <see cref="TileCycler"/> and the scene: instantiates the
-    /// tiles once, then copies positions across whenever the cycler says something
-    /// moved. All the logic worth testing lives in the cycler.
-    /// </summary>
+    /// <summary>Adapter between <see cref="TileCycler"/> and the scene. All the logic
+    /// worth testing lives in the cycler.</summary>
     public sealed class GroundStreamer : IStartable, ITickable, IResettable, IDisposable
     {
         private readonly LevelConfig _config;
@@ -32,8 +29,8 @@ namespace TurretRush.World
         {
             _root = new GameObject("Ground").transform;
 
-            // The first tile starts one length behind the origin so the car begins in
-            // the middle of a tile with road already visible behind it.
+            // One length behind the origin, so the car starts mid-tile with road
+            // already visible in the mirror.
             _cycler = new TileCycler(_config.TileCount, _config.TileLength, -_config.TileLength);
             _tiles = new Transform[_cycler.TileCount];
 

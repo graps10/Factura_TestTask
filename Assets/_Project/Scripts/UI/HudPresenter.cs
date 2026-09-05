@@ -7,8 +7,7 @@ namespace TurretRush.UI
 {
     /// <summary>
     /// Keeps the permanent readouts current. Health and coins are pushed on change,
-    /// because they change rarely and redrawing them every frame would be work for
-    /// nothing; progress is pulled every frame, because it changes every frame anyway.
+    /// progress is pulled every frame - because that is how often each one moves.
     /// </summary>
     public sealed class HudPresenter : IStartable, ITickable, IDisposable
     {
@@ -30,8 +29,7 @@ namespace TurretRush.UI
             _carHealth.Changed += OnHealthChanged;
             _wallet.Changed += OnCoinsChanged;
 
-            // The events only fire on change, so the opening values have to be pushed
-            // by hand or the HUD sits empty until the first hit.
+            // Events only fire on change, so the opening values are pushed by hand.
             OnHealthChanged(_carHealth.Current, _carHealth.Max);
             OnCoinsChanged(_wallet.Balance);
             _hud.SetProgress(0f);

@@ -11,7 +11,10 @@ using VContainer.Unity;
 namespace TurretRush.Bootstrap
 {
     /// <summary>
-    /// The whole shape of the game, as one method you can read top to bottom.
+    /// The whole shape of the game as one method read top to bottom. The same
+    /// sequence as a state machine would be five states, a switch in Update and a
+    /// set of flags recording which transition is half finished; as awaits, the
+    /// ordering is enforced by the language.
     /// </summary>
     public sealed class GameFlow : IStartable, IDisposable
     {
@@ -80,8 +83,7 @@ namespace TurretRush.Bootstrap
             }
             catch (OperationCanceledException)
             {
-                // The scene is going away. Everything this loop touched is either
-                // already gone or about to be, so there is nothing to unwind.
+                // The scene is going away; nothing here needs unwinding.
             }
         }
 
@@ -96,11 +98,8 @@ namespace TurretRush.Bootstrap
             return _session.Outcome.Value;
         }
 
-        /// <summary>
-        /// The HUD and the bar over the car go together: both belong to the level
-        /// being played, and hiding the HUD also takes the pause button away
-        /// everywhere pausing would make no sense.
-        /// </summary>
+        /// <summary>Both belong to the level being played - and hiding the HUD also
+        /// takes the pause button away everywhere pausing makes no sense.</summary>
         private void ShowLevelReadouts(bool visible)
         {
             _hud.SetVisible(visible);
