@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad47636a29924944ae3bacc1628166d, type: 3}
   m_Name: WeaponConfig
   m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.WeaponConfig
-  fireInterval: 0.35
+  fireInterval: 0.22
   initialDelay: 0.6
   projectilePrefab: {fileID: 8396751289508902141, guid: fd552fcee89bbc64ea0c33264e6d5f7b, type: 3}
-  damage: 10
+  damage: 15
   speed: 90
-  radius: 0.2
+  radius: 0.3
   maxRange: 200
   hitMask:
     serializedVersion: 2
