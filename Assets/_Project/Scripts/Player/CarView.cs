@@ -1,3 +1,4 @@
+using TurretRush.Combat;
 using UnityEngine;
 
 namespace TurretRush.Player
@@ -22,7 +23,15 @@ namespace TurretRush.Player
                  "room the car takes up, so nothing has to hardcode its size.")]
         [SerializeField] private BoxCollider body;
 
+        [SerializeField] private HitFlash hitFlash;
+
         public Transform Root => transform;
+
+        public void Flash()
+        {
+            if (hitFlash != null)
+                hitFlash.Play();
+        }
 
         /// <param name="travelledDelta">Metres covered since the last frame.</param>
         public void SpinWheels(float travelledDelta)

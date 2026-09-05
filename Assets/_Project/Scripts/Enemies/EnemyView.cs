@@ -14,6 +14,8 @@ namespace TurretRush.Enemies
 
         [SerializeField] private Animator animator;
 
+        [SerializeField] private HitFlash hitFlash;
+
         private IDamageable _target;
 
         public bool IsAlive => _target != null && _target.IsAlive;
@@ -28,7 +30,18 @@ namespace TurretRush.Enemies
         /// </summary>
         public void Unbind() => _target = null;
 
-        public void TakeDamage(int amount) => _target?.TakeDamage(amount);
+        public void TakeDamage(int amount)
+        {
+            // Checked before forwarding so an already-dead body does not blink at a
+            // bullet that was in flight when it died.
+            if (_target == null || !_target.IsAlive)
+                return;
+
+            _target.TakeDamage(amount);
+
+            if (hitFlash != null)
+                hitFlash.Play();
+        }
 
         public void PrepareForSpawn(Vector3 position)
         {

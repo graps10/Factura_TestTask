@@ -3,6 +3,7 @@ using TurretRush.Config;
 using TurretRush.Enemies;
 using TurretRush.Input;
 using TurretRush.Player;
+using TurretRush.Vfx;
 using TurretRush.World;
 using UnityEngine;
 using VContainer;
@@ -24,6 +25,7 @@ namespace TurretRush.Bootstrap
         [SerializeField] private TurretConfig turretConfig;
         [SerializeField] private WeaponConfig weaponConfig;
         [SerializeField] private EnemyConfig enemyConfig;
+        [SerializeField] private VfxConfig vfxConfig;
 
         [Header("Scene")]
         [SerializeField] private Camera cam;
@@ -36,6 +38,7 @@ namespace TurretRush.Bootstrap
             builder.RegisterInstance(turretConfig);
             builder.RegisterInstance(weaponConfig);
             builder.RegisterInstance(enemyConfig);
+            builder.RegisterInstance(vfxConfig);
 
             builder.RegisterComponent(cam);
             builder.RegisterComponentInHierarchy<CarView>();
@@ -60,6 +63,12 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<EnemySystem>().AsSelf();
             builder.RegisterEntryPoint<GroundStreamer>().AsSelf();
             builder.RegisterEntryPoint<CameraRig>().AsSelf();
+
+            // Presentation only. Both hang off events rather than being called by the
+            // systems that raise them, so gameplay stays unaware that feedback exists
+            // and either could be removed without touching a rule.
+            builder.RegisterEntryPoint<VfxSystem>().AsSelf();
+            builder.RegisterEntryPoint<CarFeedback>();
 
             // Temporary, removed once GameFlow owns starting the level.
             builder.RegisterEntryPoint<DebugAutoStart>();

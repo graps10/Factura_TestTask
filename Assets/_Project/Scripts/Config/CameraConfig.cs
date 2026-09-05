@@ -19,7 +19,13 @@ namespace TurretRush.Config
                  "Something in between lets the player feel the car crossing the road.")]
         [SerializeField, Range(0f, 1f)] private float lateralFollow = 0.6f;
 
+        [Header("Shake")]
+        [Tooltip("How fast the knock oscillates. Higher reads as a sharper impact.")]
+        [SerializeField, Min(0.1f)] private float shakeFrequency = 22f;
+
         public Vector3 Offset => offset;
+
+        public float ShakeFrequency => shakeFrequency;
 
         public Vector3 EulerAngles => eulerAngles;
 
