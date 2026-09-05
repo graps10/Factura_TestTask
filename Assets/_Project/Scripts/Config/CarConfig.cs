@@ -5,6 +5,9 @@ namespace TurretRush.Config
     [CreateAssetMenu(menuName = "TurretRush/Car Config", fileName = "CarConfig")]
     public sealed class CarConfig : ScriptableObject
     {
+        [Header("Durability")]
+        [SerializeField, Min(1)] private int maxHealth = 100;
+
         [Header("Motion")]
         [SerializeField, Min(0f)] private float speed = 12f;
 
@@ -27,6 +30,8 @@ namespace TurretRush.Config
 
         [Tooltip("Distance ahead sampled to work out which way the car is pointing.")]
         [SerializeField, Min(0.1f)] private float headingLookAhead = 2f;
+
+        public int MaxHealth => maxHealth;
 
         public float Speed => speed;
 

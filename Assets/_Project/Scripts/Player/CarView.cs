@@ -18,6 +18,10 @@ namespace TurretRush.Player
         [Tooltip("Flip if the wheels spin backwards while driving forwards.")]
         [SerializeField] private bool invertWheelSpin;
 
+        [Tooltip("The box on this object. Used as the single definition of how much " +
+                 "room the car takes up, so nothing has to hardcode its size.")]
+        [SerializeField] private BoxCollider body;
+
         public Transform Root => transform;
 
         /// <param name="travelledDelta">Metres covered since the last frame.</param>
@@ -34,6 +38,23 @@ namespace TurretRush.Player
             // The wheel meshes are flat in X, so their axle is the local X axis.
             for (var i = 0; i < wheels.Length; i++)
                 wheels[i].Rotate(degrees, 0f, 0f, Space.Self);
+        }
+
+        /// <summary>
+        /// Whether a point on the ground is inside the car's footprint.
+        ///
+        /// Resolved in code rather than through a trigger callback so a hit lands on
+        /// the exact frame the enemy arrives, at any frame rate, with no dependence
+        /// on where the physics step happened to fall. Height is ignored because
+        /// everything in this game stands on the same plane.
+        /// </summary>
+        public bool Overlaps(Vector3 worldPoint, float margin)
+        {
+            var local = transform.InverseTransformPoint(worldPoint) - body.center;
+            var extents = body.size * 0.5f;
+
+            return Mathf.Abs(local.x) <= extents.x + margin
+                   && Mathf.Abs(local.z) <= extents.z + margin;
         }
     }
 }
