@@ -15,8 +15,9 @@ MonoBehaviour:
   prefab: {fileID: 6420471136480608190, guid: d554c1da055e3d24da9b83c2771d4103, type: 3}
   poolCapacity: 24
   poolMaxSize: 64
-  maxHealth: 30
-  damageToCar: 12
+  maxHealth: 45
+  damageToCar: 10
+  coinsPerKill: 10
   runSpeed: 6.5
   wanderRadius: 1.4
   wanderFrequency: 0.55
@@ -24,7 +25,7 @@ MonoBehaviour:
   detectRadius: 24
   impactMargin: 0.35
   seed: 20260904
-  count: 45
+  count: 32
   safeStartDistance: 40
   finishMargin: 20
   spacingMargin: 0.25

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cd3be00950c2df48a1bf995331e7e07, type: 3}
   m_Name: CarConfig
   m_EditorClassIdentifier: TurretRush.Game::TurretRush.Config.CarConfig
+  maxHealth: 100
   speed: 12
   acceleration: 8
   braking: 14
@@ -19,3 +20,5 @@ MonoBehaviour:
   driftFrequency: 0.035
   driftPhase: 0
   headingLookAhead: 2
+  bankPerHeadingDegree: 1.5
+  bankSmoothTime: 0.18

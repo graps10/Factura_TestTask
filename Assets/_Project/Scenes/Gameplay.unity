@@ -14,19 +14,19 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.8078432, g: 0.68235296, b: 0.5529412, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_LinearFogStart: 70
+  m_LinearFogEnd: 140
+  m_AmbientSkyColor: {r: 0.730461, g: 0.5457247, b: 0.3813261, a: 1}
+  m_AmbientEquatorColor: {r: 0.60382754, g: 0.39157256, b: 0.22322798, a: 1}
+  m_AmbientGroundColor: {r: 0.038204376, g: 0.012983031, b: 0.004024717, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: d493aef5beac7c5409cf049dec874033, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 1b8f8a6a81eaad140acaaaf94d075b63, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 168711395}
   - component: {fileID: 168711399}
   - component: {fileID: 168711400}
+  - component: {fileID: 168711401}
   m_Layer: 5
   m_Name: GameplayCanvas
   m_TagString: Untagged
@@ -353,6 +354,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 689048697}
+  - {fileID: 1653276375}
   - {fileID: 2146516468}
   - {fileID: 302150433}
   - {fileID: 324142238}
@@ -403,9 +405,32 @@ MonoBehaviour:
   parent: {fileID: 2146516468}
   rise: 90
   duration: 0.8
-  worldOffset: {x: 0, y: 1.8, z: 0}
+  worldOffset: {x: 0, y: 2.9, z: 0}
+  coinColor: {r: 1, g: 0.84, b: 0.22, a: 1}
+  coinScale: 1
+  damageColor: {r: 1, g: 1, b: 1, a: 0.8}
+  damageScale: 0.65
+  playerDamageColor: {r: 1, g: 0.29, b: 0.24, a: 1}
+  playerDamageScale: 0.95
   capacity: 12
   maxSize: 32
+--- !u!114 &168711401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168711394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db7687cadac65dd408b5f1428c7c9ac7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TurretRush.Game::TurretRush.UI.EnemyHealthBarLayer
+  canvas: {fileID: 168711397}
+  worldCamera: {fileID: 330585545}
+  prefab: {fileID: 8612937884444166298, guid: a80296f71f79791418a1a65bab77e165, type: 3}
+  parent: {fileID: 1653276375}
+  worldOffset: {x: 0, y: 2.6, z: 0}
 --- !u!1 &217862488
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +646,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 265046612}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -816,7 +841,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.02745098, g: 0.98039216, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 1
@@ -839,7 +864,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 300
-  field of view: 85.56559
+  field of view: 96.8157
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -895,7 +920,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
+  m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -945,7 +970,7 @@ Light:
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 2
+  m_Intensity: 1.3
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1448,6 +1473,8 @@ MonoBehaviour:
   healthFill: {fileID: 915697546}
   progressFill: {fileID: 1995983635}
   coinLabel: {fileID: 217862490}
+  coinPunch: 0.35
+  coinPunchDuration: 0.25
   pauseButton: {fileID: 1200284482}
 --- !u!225 &689048699
 CanvasGroup:
@@ -2339,6 +2366,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1653276374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1653276375}
+  m_Layer: 5
+  m_Name: EnemyBars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1653276375
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653276374}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 168711398}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1709011531
 GameObject:
   m_ObjectHideFlags: 0
