@@ -614,6 +614,7 @@ MonoBehaviour:
   - {fileID: 3808388566837341669}
   wheelRadius: 0.36
   invertWheelSpin: 0
+  body: {fileID: 235023913647954863}
 --- !u!1 &4475913956598833773
 GameObject:
   m_ObjectHideFlags: 0
