@@ -1,4 +1,5 @@
 using TurretRush.Config;
+using TurretRush.Level;
 using TurretRush.Player;
 using UnityEngine;
 using VContainer.Unity;
@@ -10,7 +11,7 @@ namespace TurretRush.Combat
     /// time. Registered after <see cref="TurretAim"/> so shots leave a barrel that
     /// has already been pointed this frame rather than trailing the beam by one.
     /// </summary>
-    public sealed class Weapon : IStartable, ITickable
+    public sealed class Weapon : IStartable, ITickable, IResettable
     {
         private readonly TurretView _view;
         private readonly ProjectileSystem _projectiles;

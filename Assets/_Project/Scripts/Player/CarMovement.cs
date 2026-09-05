@@ -1,4 +1,5 @@
 using TurretRush.Config;
+using TurretRush.Level;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -10,7 +11,7 @@ namespace TurretRush.Player
     /// camera, the progress bar and the enemy spawner all read
     /// <see cref="DistanceTravelled"/> rather than measuring the transform again.
     /// </summary>
-    public sealed class CarMovement : IStartable, ITickable
+    public sealed class CarMovement : IStartable, ITickable, IResettable
     {
         private readonly CarView _view;
         private readonly CarConfig _config;

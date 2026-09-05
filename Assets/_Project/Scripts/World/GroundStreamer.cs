@@ -1,5 +1,6 @@
 using System;
 using TurretRush.Config;
+using TurretRush.Level;
 using TurretRush.Player;
 using UnityEngine;
 using VContainer.Unity;
@@ -12,7 +13,7 @@ namespace TurretRush.World
     /// tiles once, then copies positions across whenever the cycler says something
     /// moved. All the logic worth testing lives in the cycler.
     /// </summary>
-    public sealed class GroundStreamer : IStartable, ITickable, IDisposable
+    public sealed class GroundStreamer : IStartable, ITickable, IResettable, IDisposable
     {
         private readonly LevelConfig _config;
         private readonly CarMovement _car;

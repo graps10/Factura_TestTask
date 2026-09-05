@@ -16,3 +16,8 @@ MonoBehaviour:
   eulerAngles: {x: 28, y: 0, z: 0}
   smoothTime: 0.15
   lateralFollow: 0.6
+  introOffset: {x: -3.7, y: 4.7, z: -3.3}
+  introEulerAngles: {x: 37, y: 50, z: 0}
+  introDuration: 0.9
+  introEase: 10
+  shakeFrequency: 22

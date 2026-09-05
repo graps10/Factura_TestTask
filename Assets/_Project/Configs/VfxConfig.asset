@@ -15,5 +15,8 @@ MonoBehaviour:
   enemyDeathPrefab: {fileID: 7377531498186930667, guid: 08bbe6903e5bfba49947a1ca16c39e8a, type: 3}
   poolCapacity: 12
   poolMaxSize: 32
+  carExplosionPrefab: {fileID: 1009839605161407071, guid: 59768bf520b82bf41a0d18635faff435, type: 3}
+  explosionShakeStrength: 1.1
+  explosionShakeDuration: 0.6
   hitShakeStrength: 0.35
   hitShakeDuration: 0.22

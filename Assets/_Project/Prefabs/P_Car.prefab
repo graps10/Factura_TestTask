@@ -617,6 +617,9 @@ MonoBehaviour:
   invertWheelSpin: 0
   body: {fileID: 235023913647954863}
   hitFlash: {fileID: 6736073959617260392}
+  visuals:
+  - {fileID: 9108246168574428423}
+  - {fileID: 7295406107783524937}
 --- !u!114 &6736073959617260392
 MonoBehaviour:
   m_ObjectHideFlags: 0

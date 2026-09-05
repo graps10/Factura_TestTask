@@ -2,7 +2,9 @@ using TurretRush.Combat;
 using TurretRush.Config;
 using TurretRush.Enemies;
 using TurretRush.Input;
+using TurretRush.Level;
 using TurretRush.Player;
+using TurretRush.UI;
 using TurretRush.Vfx;
 using TurretRush.World;
 using UnityEngine;
@@ -43,19 +45,25 @@ namespace TurretRush.Bootstrap
             builder.RegisterComponent(cam);
             builder.RegisterComponentInHierarchy<CarView>();
             builder.RegisterComponentInHierarchy<TurretView>();
+            builder.RegisterComponentInHierarchy<GameScreensView>();
 
             builder.Register<IInputService, PointerInputService>(Lifetime.Singleton);
 
             // The car's hit points, and the only Health the container hands out -
             // enemies build their own, one per body, as they come out of the pool.
             builder.Register(_ => new Health(carConfig.MaxHealth), Lifetime.Singleton);
+            builder.Register(_ => new LevelProgress(levelConfig.Length), Lifetime.Singleton);
+            builder.Register<LevelSession>(Lifetime.Singleton);
 
             // Entry points run in registration order, and that order is the frame's
             // execution order. Read top to bottom it is the shape of one frame: the
             // car moves, the barrel is pointed, the gun fires down that barrel, the
             // bullets already in the air advance, the enemies react to where the car
-            // now is, the road catches up, the camera looks at the result. Nothing
-            // here reads a value another system has yet to write this frame.
+            // now is, the road catches up, the camera looks at the result.
+            //
+            // It is also the order a restart runs in, since LevelSession walks every
+            // IResettable in registration order - which is what puts the car back on
+            // the start line before the ground streamer lays its tiles around it.
             builder.RegisterEntryPoint<CarMovement>().AsSelf();
             builder.RegisterEntryPoint<TurretAim>().AsSelf();
             builder.RegisterEntryPoint<Weapon>().AsSelf();
@@ -70,8 +78,9 @@ namespace TurretRush.Bootstrap
             builder.RegisterEntryPoint<VfxSystem>().AsSelf();
             builder.RegisterEntryPoint<CarFeedback>();
 
-            // Temporary, removed once GameFlow owns starting the level.
-            builder.RegisterEntryPoint<DebugAutoStart>();
+            // Registered last so its Start runs after every system has placed itself,
+            // and the first thing the player sees is a settled scene.
+            builder.RegisterEntryPoint<GameFlow>();
         }
     }
 }

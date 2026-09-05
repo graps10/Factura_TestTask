@@ -1,5 +1,6 @@
 using TurretRush.Config;
 using TurretRush.Input;
+using TurretRush.Level;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -11,7 +12,7 @@ namespace TurretRush.Player
     /// the beam, because the beam is that answer drawn on screen rather than a
     /// separate concern.
     /// </summary>
-    public sealed class TurretAim : IStartable, ITickable
+    public sealed class TurretAim : IStartable, ITickable, IResettable
     {
         private readonly TurretView _view;
         private readonly IInputService _input;
@@ -26,18 +27,29 @@ namespace TurretRush.Player
             _state = new TurretAimState(config.MaxYaw, config.DegreesPerScreenWidth, config.SmoothTime);
         }
 
-        /// <summary>Aiming stays live before the level starts - the player is told to
-        /// swipe before the car moves - and is switched off while paused.</summary>
-        public bool IsEnabled { get; private set; } = true;
+        /// <summary>
+        /// Off until the flow says otherwise. Aiming comes alive one beat before the
+        /// car does, while the hint is telling the player to swipe, and goes away
+        /// again the moment the level is decided.
+        /// </summary>
+        public bool IsEnabled { get; private set; }
 
         public float CurrentYaw => _state.CurrentYaw;
 
         public void Enable() => IsEnabled = true;
 
-        public void Disable() => IsEnabled = false;
+        public void Disable()
+        {
+            IsEnabled = false;
+
+            // The beam is the sight, so it belongs to aiming. Leaving it drawn over a
+            // result screen would suggest the player can still shoot.
+            _view.HideBeam();
+        }
 
         public void ResetToStart()
         {
+            Disable();
             _state.Reset();
             _view.SetYaw(0f);
         }
@@ -46,7 +58,10 @@ namespace TurretRush.Player
 
         public void Tick()
         {
-            if (IsEnabled && _input.IsPressed)
+            if (!IsEnabled)
+                return;
+
+            if (_input.IsPressed)
                 _state.AddInput(_input.DragDelta.x / Mathf.Max(1, Screen.width));
 
             _state.Step(Time.deltaTime);

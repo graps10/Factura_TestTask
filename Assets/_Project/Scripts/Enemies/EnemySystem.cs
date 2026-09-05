@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TurretRush.Combat;
 using TurretRush.Config;
+using TurretRush.Level;
 using TurretRush.Player;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -17,7 +18,7 @@ namespace TurretRush.Enemies
     /// it also keeps the aggro rule in one readable place instead of scattered
     /// across forty instances.
     /// </summary>
-    public sealed class EnemySystem : IStartable, ITickable, IDisposable
+    public sealed class EnemySystem : IStartable, ITickable, IResettable, IDisposable
     {
         private readonly EnemyConfig _config;
         private readonly LevelConfig _level;
@@ -47,6 +48,28 @@ namespace TurretRush.Enemies
 
         public int KillCount { get; private set; }
 
+        /// <summary>
+        /// Enemies are placed on the road as soon as the level is reset, so the
+        /// player sees them waiting during the intro, but they do not think until the
+        /// level actually starts. Without this they would keep charging through the
+        /// result screen and land hits on a car whose fate is already decided.
+        /// </summary>
+        public bool IsRunning { get; private set; }
+
+        public void Begin() => IsRunning = true;
+
+        public void Halt()
+        {
+            IsRunning = false;
+
+            // Speed is pushed to the animator from Tick, so stopping Tick leaves the
+            // blend tree on whatever it last heard - a charging enemy would run on the
+            // spot for as long as the result screen is up. Nothing will speak to the
+            // animator again, so the last word has to be the right one.
+            for (var i = 0; i < _live.Count; i++)
+                _live[i].View.SetSpeed(0f);
+        }
+
         public void Start()
         {
             _root = new GameObject("Enemies").transform;
@@ -72,6 +95,9 @@ namespace TurretRush.Enemies
 
         public void Tick()
         {
+            if (!IsRunning)
+                return;
+
             var deltaTime = Time.deltaTime;
             var carPosition = _car.Root.position;
 
@@ -83,12 +109,18 @@ namespace TurretRush.Enemies
 
         public void ResetToStart()
         {
+            IsRunning = false;
+
             for (var i = _live.Count - 1; i >= 0; i--)
                 Release(i);
 
             KillCount = 0;
-            _cursor = 0;
             BuildPlan();
+
+            // One activation pass while stopped, so the opening shot of the level
+            // already has enemies standing on the road ahead instead of them popping
+            // in the moment the car starts moving.
+            ActivateAhead(_car.Root.position.z);
         }
 
         public void Dispose()

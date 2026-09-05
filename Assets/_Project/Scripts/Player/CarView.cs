@@ -25,12 +25,27 @@ namespace TurretRush.Player
 
         [SerializeField] private HitFlash hitFlash;
 
+        [Tooltip("Everything that should disappear when the car is destroyed: the " +
+                 "body and the turret. Toggled rather than destroyed, because the " +
+                 "same car comes back for the next attempt.")]
+        [SerializeField] private GameObject[] visuals;
+
         public Transform Root => transform;
 
         public void Flash()
         {
             if (hitFlash != null)
                 hitFlash.Play();
+        }
+
+        public void SetVisible(bool visible)
+        {
+            if (visuals == null)
+                return;
+
+            for (var i = 0; i < visuals.Length; i++)
+                if (visuals[i] != null)
+                    visuals[i].SetActive(visible);
         }
 
         /// <param name="travelledDelta">Metres covered since the last frame.</param>

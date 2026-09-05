@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TurretRush.Config;
+using TurretRush.Level;
 using UnityEngine;
 using UnityEngine.Pool;
 using VContainer.Unity;
@@ -13,7 +14,7 @@ namespace TurretRush.Combat
     /// MonoBehaviour per bullet: no per-object Update crossing into native code, and
     /// the pool means a whole level of shooting allocates nothing after warm-up.
     /// </summary>
-    public sealed class ProjectileSystem : IStartable, ITickable, IDisposable
+    public sealed class ProjectileSystem : IStartable, ITickable, IResettable, IDisposable
     {
         private readonly WeaponConfig _config;
         private readonly List<Shot> _live = new();
@@ -102,7 +103,7 @@ namespace TurretRush.Combat
             }
         }
 
-        public void DespawnAll()
+        public void ResetToStart()
         {
             for (var i = _live.Count - 1; i >= 0; i--)
                 Despawn(i);

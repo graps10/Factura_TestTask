@@ -1,3 +1,6 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using TurretRush.Config;
 using TurretRush.Player;
 using UnityEngine;
@@ -23,6 +26,7 @@ namespace TurretRush.World
         private float _shakeStrength;
         private float _shakeRemaining;
         private float _shakeDuration;
+        private bool _following;
 
         public CameraRig(Camera camera, CarView car, CameraConfig config)
         {
@@ -31,10 +35,15 @@ namespace TurretRush.World
             _config = config;
         }
 
-        public void Start() => SnapToTarget();
+        public void Start() => SnapToIntro();
 
         public void LateTick()
         {
+            // Standing still during the intro. The tween owns the transform for that
+            // stretch, and two writers on one position means whichever ran last wins.
+            if (!_following)
+                return;
+
             var deltaTime = Time.deltaTime;
 
             var followed = Vector3.SmoothDamp(
@@ -61,25 +70,54 @@ namespace TurretRush.World
             _shakeRemaining = duration;
         }
 
-        /// <summary>Jumps straight to the target with no easing. Used on level restart
-        /// so the camera does not sweep across the whole track.</summary>
-        public void SnapToTarget()
+        /// <summary>Jumps straight to the showcase pose behind the parked car.</summary>
+        public void SnapToIntro()
         {
+            _camera.DOKill();
+            _following = false;
             _velocity = Vector3.zero;
             _shakeRemaining = 0f;
             _shakeStrength = 0f;
 
-            _camera.SetPositionAndRotation(TargetPosition(), Quaternion.Euler(_config.EulerAngles));
+            _camera.SetPositionAndRotation(IntroPosition(), Quaternion.Euler(_config.IntroEulerAngles));
         }
 
-        private Vector3 TargetPosition()
+        /// <summary>
+        /// Pulls back and up into the gameplay pose, and hands the transform back to
+        /// the follow when it lands. Awaited by the flow, so the hint cannot appear
+        /// over a camera that is still moving.
+        /// </summary>
+        public async UniTask PlayIntroAsync(CancellationToken cancellationToken)
+        {
+            _camera.DOKill();
+
+            // Two tweens rather than a sequence, both aimed at the same transform and
+            // both the same length: DOKill on the transform then reaches both, which
+            // a sequence built by DOTween.Sequence() would not be caught by.
+            _camera.DOMove(TargetPosition(), _config.IntroDuration).SetEase(_config.IntroEase);
+
+            await _camera.DORotate(_config.EulerAngles, _config.IntroDuration)
+                .SetEase(_config.IntroEase)
+                .ToUniTask(cancellationToken: cancellationToken);
+
+            // Reached only when the tween completed. A cancelled one throws, and the
+            // flow that owns the token is the thing being torn down anyway.
+            _velocity = Vector3.zero;
+            _following = true;
+        }
+
+        private Vector3 TargetPosition() => PoseAround(_config.Offset);
+
+        private Vector3 IntroPosition() => PoseAround(_config.IntroOffset);
+
+        private Vector3 PoseAround(Vector3 offset)
         {
             var car = _car.Root.position;
 
             return new Vector3(
-                car.x * _config.LateralFollow + _config.Offset.x,
-                _config.Offset.y,
-                car.z + _config.Offset.z);
+                car.x * _config.LateralFollow + offset.x,
+                offset.y,
+                car.z + offset.z);
         }
 
         private Vector3 EvaluateShake(float deltaTime)
