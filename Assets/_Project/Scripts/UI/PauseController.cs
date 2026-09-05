@@ -27,8 +27,6 @@ namespace TurretRush.UI
             _view = view;
         }
 
-        public bool IsPaused { get; private set; }
-
         public void Start()
         {
             _onPausePressed = () => SetPaused(true);
@@ -59,7 +57,6 @@ namespace TurretRush.UI
 
         public void SetPaused(bool paused)
         {
-            IsPaused = paused;
             Time.timeScale = paused ? 0f : 1f;
             _view.SetVisible(paused);
         }

@@ -26,7 +26,5 @@ namespace TurretRush.Level
         public float Evaluate(float distance) => Mathf.Clamp01(distance / _length);
 
         public bool IsComplete(float distance) => distance >= _length;
-
-        public float RemainingMetres(float distance) => Mathf.Max(0f, _length - distance);
     }
 }

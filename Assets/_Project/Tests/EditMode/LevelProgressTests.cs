@@ -69,16 +69,6 @@ namespace TurretRush.Tests
             }
         }
 
-        [Test]
-        public void RemainingMetres_CountsDownAndStopsAtZero()
-        {
-            var progress = Create();
-
-            Assert.That(progress.RemainingMetres(0f), Is.EqualTo(Length));
-            Assert.That(progress.RemainingMetres(100f), Is.EqualTo(Length - 100f));
-            Assert.That(progress.RemainingMetres(Length + 50f), Is.EqualTo(0f));
-        }
-
         [TestCase(0f)]
         [TestCase(-1f)]
         public void Constructor_NonPositiveLength_Throws(float length)

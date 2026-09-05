@@ -39,8 +39,6 @@ namespace TurretRush.Config
 
         public int TileCount => tileCount;
 
-        public float RoadHalfWidth => roadHalfWidth;
-
         /// <summary>How far from the centre line the car is allowed to wander.</summary>
         public float DrivableHalfWidth => Mathf.Max(0f, roadHalfWidth - roadEdgeMargin);
     }
