@@ -44,7 +44,23 @@ namespace TurretRush.Enemies
         /// particles, the coin counter and the kill tally all hang off this.</summary>
         public event Action<Vector3> Killed;
 
+        /// <summary>Where the car was struck and for how much, for the damage number.
+        /// Raised here because this is the only place that knows where the enemy was
+        /// standing when it connected.</summary>
+        public event Action<Vector3, int> CarHit;
+
         public int AliveCount => _live.Count;
+
+        /// <summary>
+        /// What an overlay needs to draw one enemy, without handing out the mutable
+        /// entry behind it. Index based rather than an enumerable so a per-frame walk
+        /// over every live enemy allocates nothing.
+        /// </summary>
+        public EnemySnapshot GetLive(int index)
+        {
+            var enemy = _live[index];
+            return new EnemySnapshot(enemy.Position, enemy.Health.Normalized);
+        }
 
         public int KillCount { get; private set; }
 
@@ -218,6 +234,7 @@ namespace TurretRush.Enemies
                 // no attack cooldown, no re-engage, no enemy stuck grinding against
                 // the bumper for the rest of the level.
                 _carHealth.TakeDamage(_config.DamageToCar);
+                CarHit?.Invoke(next, _config.DamageToCar);
                 Release(index);
             }
         }
@@ -268,6 +285,18 @@ namespace TurretRush.Enemies
             enemy.View.Unbind();
             _pool.Release(enemy.View);
             _live.RemoveAt(index);
+        }
+
+        public readonly struct EnemySnapshot
+        {
+            public readonly Vector3 Position;
+            public readonly float NormalizedHealth;
+
+            public EnemySnapshot(Vector3 position, float normalizedHealth)
+            {
+                Position = position;
+                NormalizedHealth = normalizedHealth;
+            }
         }
 
         private sealed class LiveEnemy

@@ -24,6 +24,13 @@ namespace TurretRush.Combat
 
         public ProjectileSystem(WeaponConfig config) => _config = config;
 
+        /// <summary>
+        /// Where a shot landed and for how much. Raised from here rather than from the
+        /// body that was hit, because this is the only place that knows the point of
+        /// impact - which is where a damage number belongs, not at the target's feet.
+        /// </summary>
+        public event Action<Vector3, int> Hit;
+
         public int LiveCount => _live.Count;
 
         public void Start()
@@ -84,7 +91,19 @@ namespace TurretRush.Combat
                         _config.HitMask,
                         QueryTriggerInteraction.Collide))
                 {
-                    hit.collider.GetComponentInParent<IDamageable>()?.TakeDamage(_config.Damage);
+                    var damageable = hit.collider.GetComponentInParent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        damageable.TakeDamage(_config.Damage);
+
+                        // Only while the target is still standing. A kill already says
+                        // everything - the body drops, the debris flies, the coins come
+                        // up - and a damage number landing on top of the payout is two
+                        // labels fighting over the same patch of screen.
+                        if (damageable.IsAlive)
+                            Hit?.Invoke(hit.point, _config.Damage);
+                    }
+
                     Despawn(i);
                     continue;
                 }

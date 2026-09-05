@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,11 @@ namespace TurretRush.UI
         [Header("Coins")]
         [SerializeField] private TextMeshProUGUI coinLabel;
 
+        [Tooltip("How much the counter jumps when it pays out. Zero disables it.")]
+        [SerializeField, Range(0f, 1f)] private float coinPunch = 0.35f;
+
+        [SerializeField, Min(0.05f)] private float coinPunchDuration = 0.25f;
+
         [Header("Pause")]
         [SerializeField] private Button pauseButton;
 
@@ -41,8 +47,22 @@ namespace TurretRush.UI
 
         public void SetCoins(int balance)
         {
-            if (coinLabel != null)
-                coinLabel.SetText("{0}", balance);
+            if (coinLabel == null)
+                return;
+
+            coinLabel.SetText("{0}", balance);
+
+            // Not on the way back to zero - that is a level restart, not a payout, and
+            // a counter that jumps while resetting reads as a reward for nothing.
+            if (coinPunch <= 0f || balance == 0)
+                return;
+
+            var scale = coinLabel.transform;
+            scale.DOKill();
+            scale.localScale = Vector3.one;
+
+            scale.DOPunchScale(Vector3.one * coinPunch, coinPunchDuration, 1, 0.6f)
+                .SetUpdate(true);
         }
 
         /// <summary>

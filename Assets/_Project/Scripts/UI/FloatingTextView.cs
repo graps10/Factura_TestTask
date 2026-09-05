@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TurretRush.UI
 {
-    /// <summary>One "+10" on its way up the screen.</summary>
+    /// <summary>One label on its way up the screen.</summary>
     public sealed class FloatingTextView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI label;
@@ -12,7 +12,7 @@ namespace TurretRush.UI
 
         private RectTransform _rect;
 
-        public void Present(string text, Vector2 anchoredPosition)
+        public void Present(Vector2 anchoredPosition, string format, int value, Color color, float scale)
         {
             // Any tween from the previous use has to go before the new position is
             // written, or the pooled label finishes drifting to where the last one
@@ -20,8 +20,14 @@ namespace TurretRush.UI
             Stop();
 
             _rect.anchoredPosition = anchoredPosition;
+            _rect.localScale = Vector3.one * scale;
+
             group.alpha = 1f;
-            label.text = text;
+            label.color = color;
+
+            // SetText with a format writes the number without building a string.
+            // These pop several times a second at the busiest moments.
+            label.SetText(format, value);
         }
 
         /// <summary>Returns the fade, which is the one that decides when it is done.</summary>
